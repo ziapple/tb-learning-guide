@@ -1,0 +1,15 @@
+syntax = "proto3";
+package transport;
+
+option java_package = "com.ziapple.demo.akka";
+option java_outer_classname = "MsgProtos";
+
+/**
+ * Data Structures;
+ * MSB(Most Significant Bit)最高位
+ * LSB(Least Significant Bit)最低位
+ */
+message MsgProto {
+  int64 id = 1;
+  string content = 2;
+}

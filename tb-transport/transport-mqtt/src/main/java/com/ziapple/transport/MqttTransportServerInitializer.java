@@ -40,6 +40,7 @@ import io.netty.handler.ssl.SslHandler;
  */
 public class MqttTransportServerInitializer extends ChannelInitializer<SocketChannel> {
 
+    // Mqtt服务上下文，一个连接会创建一个Channel，对应一个上下文
     private final MqttTransportContext context;
 
     public MqttTransportServerInitializer(MqttTransportContext context) {
@@ -49,6 +50,7 @@ public class MqttTransportServerInitializer extends ChannelInitializer<SocketCha
     @Override
     public void initChannel(SocketChannel ch) {
         ChannelPipeline pipeline = ch.pipeline();
+        // 支持ssl数字证书协议
         if (context.getSslHandlerProvider() != null) {
             SslHandler sslHandler = context.getSslHandlerProvider().getSslHandler();
             pipeline.addLast(sslHandler);

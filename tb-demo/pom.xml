@@ -8,8 +8,13 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <name>Thingsboard Application</name>
-    <artifactId>tb-application</artifactId>
-
+    <name>Thingsboard Learning Demo</name>
+    <modules>
+        <module>tb-akka-demo</module>
+        <module>tb-netty-demo</module>
+        <module>tb-grpc-demo</module>
+    </modules>
+    <artifactId>tb-demo</artifactId>
+    <packaging>pom</packaging>
 
 </project>

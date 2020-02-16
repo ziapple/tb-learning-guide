@@ -25,6 +25,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Andrew Shvayka
+ * 设备会话上下文，一个Socket连接会产生一个sessionId，一个Session会new一个设备会话Conetext
+ * 1. 包装了Netty的核心对象ChannelHandlerContext，可以控制Channel连接
+ * 2. 记录MsgId，原子操作msgIdSeq
  */
 @Slf4j
 public class DeviceSessionCtx extends MqttDeviceAwareSessionContext {

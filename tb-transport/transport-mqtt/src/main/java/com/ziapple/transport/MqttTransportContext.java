@@ -28,6 +28,11 @@ import org.springframework.stereotype.Component;
 
 /**
  * Created by ashvayka on 04.10.18.Ø
+ * 一个Socket连接对应一个Mqtt服务上下文
+ * 1. 包装SSL协议提供器MqttSslHandlerProvider{@link com.ziapple.transport.MqttSslHandlerProvider}
+ * 2. 包装Mqtt消息转化成Akka格式的适配器{@link com.ziapple.transport.adaptors.MqttTransportAdaptor }，从Json->MqttMessage->Akka的Proto格式
+ * 3. 限制了最大消息内容大小maxPayloadSize,默认为65536Bytes=64KB
+ * 4. 包装了由MqttSslHandlerProvider提供的sslHandler
  */
 @Slf4j
 @ConditionalOnExpression("'${transport.type:null}'=='null' || ('${transport.type}'=='local' && '${transport.mqtt.enabled}'=='true')")

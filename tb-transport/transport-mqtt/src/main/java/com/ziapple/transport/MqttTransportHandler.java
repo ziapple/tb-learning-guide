@@ -49,7 +49,9 @@ import java.util.concurrent.ConcurrentMap;
 import static io.netty.handler.codec.mqtt.MqttConnectReturnCode.*;
 import static io.netty.handler.codec.mqtt.MqttMessageType.*;
 import static io.netty.handler.codec.mqtt.MqttQoS.*;
+
 /**
+ * MqttTransportHandler本身是一个多线程的，一个Socket连接会创建一个Handler线程来处理连接
  * @author Andrew Shvayka
  */
 @Slf4j
@@ -57,16 +59,25 @@ public class MqttTransportHandler extends ChannelInboundHandlerAdapter implement
 
     private static final MqttQoS MAX_SUPPORTED_QOS_LVL = AT_LEAST_ONCE;
 
+    // 一个连接生成一个随机的会话Id
     private final UUID sessionId;
+    // Mqtt上下文，包装了协议适配器，Mqtt消息转化器（转化成Akka格式）
     private final MqttTransportContext context;
+    // 消息转换器，将Mqtt消息转化成Akka的Proto格式
     private final MqttTransportAdaptor adaptor;
+    // 处理Mqtt消息的后端服务，CONNECT、PUBLISH、SUBCRIBE这些消息都是由transportService来做的
     private final TransportService transportService;
+    // SSL协议解析器
     private final SslHandler sslHandler;
+    // mqtt的Qos服务水平Map，一个Topic对应一个Qos
     private final ConcurrentMap<MqttTopicMatcher, Integer> mqttQoSMap;
-
+    // 连接会话信息，含session、tenant、device的最高位、最低位位置,volatile表明在主存中读取，不从线程副本中读取,biao
     private volatile SessionInfoProto sessionInfo;
+    // 记录Socket主机的hostname、ip、port
     private volatile InetSocketAddress address;
+    // 设备会话上下文，一个sessionId会new一个设备会话Context
     private volatile DeviceSessionCtx deviceSessionCtx;
+    // 网关的会话Handler
     private volatile GatewaySessionHandler gatewaySessionHandler;
 
     MqttTransportHandler(MqttTransportContext context) {
@@ -79,6 +90,11 @@ public class MqttTransportHandler extends ChannelInboundHandlerAdapter implement
         this.deviceSessionCtx = new DeviceSessionCtx(sessionId, mqttQoSMap);
     }
 
+    /**
+     * 消息接收会触发channelRead方法，一条消息触发一次processMqttMsg方法
+     * @param ctx
+     * @param msg
+     */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         log.trace("[{}] Processing msg: {}", sessionId, msg);
@@ -93,28 +109,36 @@ public class MqttTransportHandler extends ChannelInboundHandlerAdapter implement
         }
     }
 
+    /**
+     * 处理Mqtt消息
+     * @param ctx
+     * @param msg
+     */
     private void processMqttMsg(ChannelHandlerContext ctx, MqttMessage msg) {
+        // 获取远程客户端的地址
         address = (InetSocketAddress) ctx.channel().remoteAddress();
+        // 报文固定头为空，直接断开连接
         if (msg.fixedHeader() == null) {
             log.info("[{}:{}] Invalid message received", address.getHostName(), address.getPort());
             processDisconnect(ctx);
             return;
         }
+        // 把Channel放进去设备会话
         deviceSessionCtx.setChannel(ctx);
         switch (msg.fixedHeader().messageType()) {
-            case CONNECT:
+            case CONNECT:  // Mqtt连接
                 processConnect(ctx, (MqttConnectMessage) msg);
                 break;
-            case PUBLISH:
+            case PUBLISH:  // 消息发布
                 processPublish(ctx, (MqttPublishMessage) msg);
                 break;
-            case SUBSCRIBE:
+            case SUBSCRIBE: // 消息订阅
                 processSubscribe(ctx, (MqttSubscribeMessage) msg);
                 break;
-            case UNSUBSCRIBE:
+            case UNSUBSCRIBE: // 取消消息订阅
                 processUnsubscribe(ctx, (MqttUnsubscribeMessage) msg);
                 break;
-            case PINGREQ:
+            case PINGREQ:  // PING请求
                 if (checkConnected(ctx, msg)) {
                     ctx.writeAndFlush(new MqttMessage(new MqttFixedHeader(PINGRESP, false, AT_MOST_ONCE, false, 0)));
                     transportService.reportActivity(sessionInfo);
@@ -123,7 +147,7 @@ public class MqttTransportHandler extends ChannelInboundHandlerAdapter implement
                     }
                 }
                 break;
-            case DISCONNECT:
+            case DISCONNECT:  //断开连接
                 if (checkConnected(ctx, msg)) {
                     processDisconnect(ctx);
                 }
@@ -134,6 +158,11 @@ public class MqttTransportHandler extends ChannelInboundHandlerAdapter implement
 
     }
 
+    /**
+     * 处理发布请求
+     * @param ctx
+     * @param mqttMsg
+     */
     private void processPublish(ChannelHandlerContext ctx, MqttPublishMessage mqttMsg) {
         if (!checkConnected(ctx, mqttMsg)) {
             return;
@@ -151,13 +180,19 @@ public class MqttTransportHandler extends ChannelInboundHandlerAdapter implement
         }
     }
 
+    /**
+     * 处理来自网关消息发送请求
+     * @param topicName  主题名称
+     * @param msgId      消息ID
+     * @param mqttMsg    消息体
+     */
     private void handleGatewayPublishMsg(String topicName, int msgId, MqttPublishMessage mqttMsg) {
         try {
             switch (topicName) {
-                case MqttTopics.GATEWAY_TELEMETRY_TOPIC:
+                case MqttTopics.GATEWAY_TELEMETRY_TOPIC:  //时序数据
                     gatewaySessionHandler.onDeviceTelemetry(mqttMsg);
                     break;
-                case MqttTopics.GATEWAY_CLAIM_TOPIC:
+                case MqttTopics.GATEWAY_CLAIM_TOPIC:     //
                     gatewaySessionHandler.onDeviceClaim(mqttMsg);
                     break;
                 case MqttTopics.GATEWAY_ATTRIBUTES_TOPIC:
@@ -305,16 +340,28 @@ public class MqttTransportHandler extends ChannelInboundHandlerAdapter implement
         return new MqttMessage(mqttFixedHeader, mqttMessageIdVariableHeader);
     }
 
+    /**
+     * 处理连接请求
+     * @param ctx
+     * @param msg
+     */
     private void processConnect(ChannelHandlerContext ctx, MqttConnectMessage msg) {
         log.info("[{}] Processing connect msg for client: {}!", sessionId, msg.payload().clientIdentifier());
         X509Certificate cert;
         if (sslHandler != null && (cert = getX509Certificate()) != null) {
+            // 数字证书请求
             processX509CertConnect(ctx, cert);
         } else {
+            // token请求
             processAuthTokenConnect(ctx, msg);
         }
     }
 
+    /**
+     * 处理token请求
+     * @param ctx
+     * @param msg
+     */
     private void processAuthTokenConnect(ChannelHandlerContext ctx, MqttConnectMessage msg) {
         String userName = msg.payload().userName();
         log.info("[{}] Processing connect msg for client with user name: {}!", sessionId, userName);
@@ -388,6 +435,11 @@ public class MqttTransportHandler extends ChannelInboundHandlerAdapter implement
         }
     }
 
+    /**
+     * 反馈给客户端Mqtt连接消息：接收或者拒绝
+     * @param returnCode
+     * @return
+     */
     private MqttConnAckMessage createMqttConnAckMsg(MqttConnectReturnCode returnCode) {
         MqttFixedHeader mqttFixedHeader =
                 new MqttFixedHeader(CONNACK, false, AT_MOST_ONCE, false, 0);

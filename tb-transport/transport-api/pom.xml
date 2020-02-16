@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>transport-api</artifactId>
-    <name>Thingsboard Transport Server API</name>
+    <name>Thingsboard Transport API</name>
     <packaging>jar</packaging>
 
     <dependencies>

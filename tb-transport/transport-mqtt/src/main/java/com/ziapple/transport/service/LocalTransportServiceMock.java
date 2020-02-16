@@ -13,7 +13,7 @@ public class LocalTransportServiceMock implements TransportService {
 
     @Override
     public void process(TransportProtos.ValidateDeviceTokenRequestMsg msg, TransportServiceCallback<TransportProtos.ValidateDeviceCredentialsResponseMsg> callback) {
-        
+
     }
 
     @Override

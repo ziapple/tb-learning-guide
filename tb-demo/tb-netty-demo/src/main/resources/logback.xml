@@ -25,7 +25,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.ziapple.server" level="TRACE" />
+    <logger name="com.ziapple.demo" level="TRACE" />
 
     <root>
         <appender-ref ref="STDOUT"/>
