@@ -28,9 +28,8 @@ public class HelloWorldServer {
 
             @Override 
             public void run(){
-
                 System.err.println("*** shutting down gRPC server since JVM is shutting down"); 
-                HelloWorldServer.this.stop(); 
+                HelloWorldServer.this.stop();
                 System.err.println("*** server shut down"); 
             } 
         }); 
@@ -51,7 +50,6 @@ public class HelloWorldServer {
 
 
     public  static  void main(String[] args) throws IOException, InterruptedException {
-
         final HelloWorldServer server = new HelloWorldServer(); 
         server.start(); 
         server.blockUntilShutdown(); 

@@ -13,6 +13,7 @@
         <module>tb-akka-demo</module>
         <module>tb-netty-demo</module>
         <module>tb-grpc-demo</module>
+        <module>tb-akka-cluster</module>
     </modules>
     <artifactId>tb-demo</artifactId>
     <packaging>pom</packaging>
