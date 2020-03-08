@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.server.cluster;
-
-import java.util.Optional;
-import java.util.UUID;
+package com.ziapple.server.cluster.msg;
 
 /**
- * 集群路由服务
- * 1. 获取本地服务器getCurrentServer，每一台集群的服务器都要知道自己
- * 2. 通过hash环，根据实体Id分配对应的集群内要处理服务器
- * @author Andrew Shvayka
+ * 集群的消息类型
+ * Created by ashvayka on 15.03.18.
  */
-public interface ClusterRoutingService extends DiscoveryServiceListener {
+public enum MsgType {
 
-    ServerAddress getCurrentServer();
+    /**
+     * ADDED/UPDATED/DELETED 集群事件
+     */
+    CLUSTER_EVENT_MSG,
 
-    Optional<ServerAddress> resolveById(UUID entityId);
-
+    /**
+     * App初始化消息
+     */
+    APP_INIT_MSG,
 }

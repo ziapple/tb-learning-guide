@@ -18,6 +18,7 @@ package com.ziapple.server.cluster;
 import java.util.List;
 
 /**
+ * 发现服务，把本地服务器注册到集群上，并且获取集群上的其他服务器
  * @author Andrew Shvayka
  */
 public interface DiscoveryService {

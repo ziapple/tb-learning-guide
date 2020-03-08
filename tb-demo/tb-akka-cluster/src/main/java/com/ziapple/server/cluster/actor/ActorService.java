@@ -13,21 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.server.cluster;
-
-import java.util.Optional;
-import java.util.UUID;
+package com.ziapple.server.cluster.actor;
+import com.ziapple.server.cluster.rpc.RpcMsgListener;
 
 /**
- * 集群路由服务
- * 1. 获取本地服务器getCurrentServer，每一台集群的服务器都要知道自己
- * 2. 通过hash环，根据实体Id分配对应的集群内要处理服务器
- * @author Andrew Shvayka
+ * Actor服务
  */
-public interface ClusterRoutingService extends DiscoveryServiceListener {
-
-    ServerAddress getCurrentServer();
-
-    Optional<ServerAddress> resolveById(UUID entityId);
+public interface ActorService extends RpcMsgListener {
 
 }

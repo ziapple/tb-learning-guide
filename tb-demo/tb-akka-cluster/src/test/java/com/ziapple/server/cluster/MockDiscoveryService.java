@@ -16,14 +16,8 @@
 package com.ziapple.server.cluster;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,8 +25,11 @@ import java.util.List;
  */
 @Slf4j
 public class MockDiscoveryService implements DiscoveryService {
+    ServerInstance currentServer;
+
     public void init() {
         log.info("初始化集群服务器。。。");
+        currentServer = new ServerInstance(new ServerAddress("192.168.56.0",8080, ServerType.CORE));
     }
 
     @Override
@@ -51,8 +48,7 @@ public class MockDiscoveryService implements DiscoveryService {
      */
     @Override
     public ServerInstance getCurrentServer() {
-        ServerInstance serverInstance = new ServerInstance(new ServerAddress("192.168.56.0",8080, ServerType.CORE));
-        return serverInstance;
+        return currentServer;
     }
 
     /**

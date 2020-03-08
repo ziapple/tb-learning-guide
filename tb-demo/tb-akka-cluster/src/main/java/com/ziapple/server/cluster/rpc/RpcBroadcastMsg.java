@@ -13,21 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.server.cluster;
+package com.ziapple.server.cluster.rpc;
 
-import java.util.Optional;
-import java.util.UUID;
+import com.ziapple.server.gen.cluster.ClusterAPIProtos;
+import lombok.Data;
 
 /**
- * 集群路由服务
- * 1. 获取本地服务器getCurrentServer，每一台集群的服务器都要知道自己
- * 2. 通过hash环，根据实体Id分配对应的集群内要处理服务器
+ * RPC广播消息
  * @author Andrew Shvayka
  */
-public interface ClusterRoutingService extends DiscoveryServiceListener {
-
-    ServerAddress getCurrentServer();
-
-    Optional<ServerAddress> resolveById(UUID entityId);
-
+@Data
+public final class RpcBroadcastMsg {
+    private final ClusterAPIProtos.ClusterMessage msg;
 }

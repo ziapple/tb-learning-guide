@@ -17,6 +17,7 @@ package com.ziapple.server.cluster;
 
 /**
  * @author Andrew Shvayka
+ * 动态注册、更新、删除服务器
  */
 public interface DiscoveryServiceListener {
 

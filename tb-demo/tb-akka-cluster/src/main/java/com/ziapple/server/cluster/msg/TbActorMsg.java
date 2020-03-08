@@ -13,21 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.server.cluster;
-
-import java.util.Optional;
-import java.util.UUID;
+package com.ziapple.server.cluster.msg;
 
 /**
- * 集群路由服务
- * 1. 获取本地服务器getCurrentServer，每一台集群的服务器都要知道自己
- * 2. 通过hash环，根据实体Id分配对应的集群内要处理服务器
- * @author Andrew Shvayka
+ * Actor的消息
+ * TbActorMsg是ClusterMessage的payload部分
+ * payload采用字节码，需要通过{@link com.ziapple.server.cluster.rpc.ProtoWithFSTService}进行编解码
+ * Created by ashvayka on 15.03.18.
  */
-public interface ClusterRoutingService extends DiscoveryServiceListener {
+public interface TbActorMsg {
 
-    ServerAddress getCurrentServer();
-
-    Optional<ServerAddress> resolveById(UUID entityId);
+    MsgType getMsgType();
 
 }

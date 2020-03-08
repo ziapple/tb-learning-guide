@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.server.cluster;
+package com.ziapple.server.cluster.rpc;
+
+import com.ziapple.server.cluster.ServerAddress;
+import com.ziapple.server.cluster.msg.TbActorMsg;
+import com.ziapple.server.gen.cluster.ClusterAPIProtos;
 
 import java.util.Optional;
-import java.util.UUID;
 
-/**
- * 集群路由服务
- * 1. 获取本地服务器getCurrentServer，每一台集群的服务器都要知道自己
- * 2. 通过hash环，根据实体Id分配对应的集群内要处理服务器
- * @author Andrew Shvayka
- */
-public interface ClusterRoutingService extends DiscoveryServiceListener {
+public interface DataDecodingEncodingService {
 
-    ServerAddress getCurrentServer();
+    Optional<TbActorMsg> decode(byte[] byteArray);
 
-    Optional<ServerAddress> resolveById(UUID entityId);
+    byte[] encode(TbActorMsg msq);
+
+    ClusterAPIProtos.ClusterMessage convertToProtoDataMessage(ServerAddress serverAddress,
+                                                              TbActorMsg msg);
 
 }
+
