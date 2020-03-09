@@ -50,17 +50,18 @@ public class DefaultActorService implements ActorService {
     // Actor system 名称
     private static final String ACTOR_SYSTEM_NAME = "Akka";
 
-    // APP Actor 线程调度器名称
+    // APP Actor的线程池调度名称
     public static final String APP_DISPATCHER_NAME = "app-dispatcher";
-    // Core Actor 线程池调度名称
+    // 权限Actor
     public static final String CORE_DISPATCHER_NAME = "core-dispatcher";
-    //
+    // 系统规则引擎
     public static final String SYSTEM_RULE_DISPATCHER_NAME = "system-rule-dispatcher";
-    // 租户actor 线程池调度名称
+    // 租户规则引擎
     public static final String TENANT_RULE_DISPATCHER_NAME = "rule-dispatcher";
-    // RPC Actor  线程池调度名称
+    // RPC Actor
     public static final String RPC_DISPATCHER_NAME = "rpc-dispatcher";
 
+    // actor上下文，封装了actor用到的Service
     @Autowired
     private ActorSystemContext actorContext;
 
