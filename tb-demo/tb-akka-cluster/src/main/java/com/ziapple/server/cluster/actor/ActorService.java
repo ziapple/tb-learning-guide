@@ -17,7 +17,7 @@ package com.ziapple.server.cluster.actor;
 import com.ziapple.server.cluster.rpc.RpcMsgListener;
 
 /**
- * Actor服务
+ * 基于Actor实现的集群RPC远程调用服务，用于将接收到的本地消息分发给不同的Actor
  */
 public interface ActorService extends RpcMsgListener {
 
