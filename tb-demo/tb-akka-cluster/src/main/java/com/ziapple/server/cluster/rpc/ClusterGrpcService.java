@@ -85,7 +85,7 @@ public class ClusterGrpcService extends ClusterRpcServiceGrpc.ClusterRpcServiceI
     }
 
     @Override
-    public void onSessionCreated(UUID msgUid, StreamObserver<com.ziapple.server.gen.cluster.ClusterAPIProtos.ClusterMessage> inputStream) {
+    public void onSessionCreated(UUID msgUid, StreamObserver<ClusterAPIProtos.ClusterMessage> inputStream) {
         BlockingQueue<StreamObserver<ClusterAPIProtos.ClusterMessage>> queue = pendingSessionMap.remove(msgUid);
         if (queue != null) {
             try {
@@ -135,8 +135,8 @@ public class ClusterGrpcService extends ClusterRpcServiceGrpc.ClusterRpcServiceI
     }
 
     /**
-     *
-     * @param msg
+     * 接受消息
+     * @param msg  消息体
      * @return
      */
     private StreamObserver<ClusterAPIProtos.ClusterMessage> createSession(RpcSessionCreateRequestMsg msg) {
@@ -153,16 +153,31 @@ public class ClusterGrpcService extends ClusterRpcServiceGrpc.ClusterRpcServiceI
         }
     }
 
+    /**
+     * 发送消息
+     * @param message 消息
+     */
     @Override
     public void tell(ClusterAPIProtos.ClusterMessage message) {
         listener.onSendMsg(message);
     }
 
+    /**
+     *
+     * @param serverAddress 目标地址
+     * @param actorMsg      Actor消息
+     */
     @Override
     public void tell(ServerAddress serverAddress, TbActorMsg actorMsg) {
         listener.onSendMsg(encodingService.convertToProtoDataMessage(serverAddress, actorMsg));
     }
 
+    /**
+     * 发送消息
+     * @param serverAddress   目标地址
+     * @param msgType         消息类型
+     * @param data            消息字节码
+     */
     @Override
     public void tell(ServerAddress serverAddress, ClusterAPIProtos.MessageType msgType, byte[] data) {
         ClusterAPIProtos.ClusterMessage msg = ClusterAPIProtos.ClusterMessage

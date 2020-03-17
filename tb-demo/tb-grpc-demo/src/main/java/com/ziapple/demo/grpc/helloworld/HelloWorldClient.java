@@ -1,8 +1,5 @@
-package com.ziapple.demo.grpc;
+package com.ziapple.demo.grpc.helloworld;
 
-import com.ziapple.demo.grpc.helloworld.GreeterGrpc;
-import com.ziapple.demo.grpc.helloworld.HelloReply;
-import com.ziapple.demo.grpc.helloworld.HelloRequest;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
@@ -44,7 +41,7 @@ public class HelloWorldClient {
     }
 
     public static void main(String[] args) throws InterruptedException { 
-        HelloWorldClient client = new HelloWorldClient("127.0.0.1",50051); 
+        HelloWorldClient client = new HelloWorldClient("127.0.0.1",50052);
         try{ 
             String user = "world"; 
             if (args.length > 0){ 

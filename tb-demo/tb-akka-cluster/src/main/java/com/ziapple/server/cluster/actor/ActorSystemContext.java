@@ -67,7 +67,10 @@ public class ActorSystemContext {
     @Getter
     private final Config config;
 
+<<<<<<< HEAD
     @Getter
+=======
+>>>>>>> 70a2af43f122c38e763e84131678496d2eef88cc
     @Setter
     private ActorSystem actorSystem;
 

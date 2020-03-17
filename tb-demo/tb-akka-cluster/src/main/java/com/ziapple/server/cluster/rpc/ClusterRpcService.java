@@ -29,7 +29,7 @@ public interface ClusterRpcService {
     // 初始化RPC集群
     void init(RpcMsgListener listener);
 
-    // 几圈广播消息
+    // 集群广播消息
     void broadcast(RpcBroadcastMsg msg);
 
     // 服务器间建立会话

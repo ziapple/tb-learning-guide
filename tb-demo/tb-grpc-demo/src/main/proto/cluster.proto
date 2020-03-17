@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+//生成多文件，可以将类都生成在一个文件中
+option java_multiple_files = false;
+//包名
+option java_package = "com.ziapple.server.rpc";
+//生成的类名
+option java_outer_classname = "ClusterProto";
+
+package cluster;
+
+// 定义服务
+service ClusterService {
+  rpc handleMsg (stream MsgRequest) returns (stream MsgResponse) {}
+}
+
+message MsgRequest {
+    string msgType = 1;
+    string payload = 2;
+}
+
+message MsgResponse {
+    string status = 1;
+}
