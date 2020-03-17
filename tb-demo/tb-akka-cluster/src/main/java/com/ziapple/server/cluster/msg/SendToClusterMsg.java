@@ -15,24 +15,25 @@
  */
 package com.ziapple.server.cluster.msg;
 
-/**
- * 集群的消息类型
- * Created by ashvayka on 15.03.18.
- */
-public enum MsgType {
+import com.ziapple.server.cluster.msg.MsgType;
+import com.ziapple.server.cluster.msg.TbActorMsg;
+import com.ziapple.server.data.id.EntityId;
+import lombok.Data;
 
-    /**
-     * ADDED/UPDATED/DELETED 集群事件
-     */
-    CLUSTER_EVENT_MSG,
+@Data
+public class SendToClusterMsg implements TbActorMsg {
 
-    /**
-     * App初始化消息
-     */
-    APP_INIT_MSG,
+    private TbActorMsg msg;
+    private EntityId entityId;
 
-    /**
-     * 集群消息
-     */
-    SEND_TO_CLUSTER_MSG,
+    public SendToClusterMsg(EntityId entityId, TbActorMsg msg) {
+        this.entityId = entityId;
+        this.msg = msg;
+    }
+
+
+    @Override
+    public MsgType getMsgType() {
+        return MsgType.SEND_TO_CLUSTER_MSG;
+    }
 }

@@ -23,6 +23,7 @@ import com.google.protobuf.ByteString;
 import com.ziapple.server.cluster.DiscoveryService;
 import com.ziapple.server.cluster.ServerAddress;
 import com.ziapple.server.cluster.ServerInstance;
+import com.ziapple.server.cluster.msg.SendToClusterMsg;
 import com.ziapple.server.cluster.msg.TbActorMsg;
 import com.ziapple.server.cluster.rpc.ClusterRpcService;
 import com.ziapple.server.cluster.rpc.RpcBroadcastMsg;
@@ -71,9 +72,6 @@ public class DefaultActorService implements ActorService {
     @Autowired
     private DiscoveryService discoveryService;
 
-    @Autowired
-    private DeviceStateService deviceStateService;
-
     private ActorSystem system;
 
     private ActorRef appActor;
@@ -92,14 +90,8 @@ public class DefaultActorService implements ActorService {
         system = ActorSystem.create(ACTOR_SYSTEM_NAME, actorContext.getConfig());
         actorContext.setActorSystem(system);
 
-        appActor = system.actorOf(Props.create(new AppActor.ActorCreator(actorContext)).withDispatcher(APP_DISPATCHER_NAME), "appActor");
+        appActor = system.actorOf(Props.create(new AppActor(actorContext)).withDispatcher(APP_DISPATCHER_NAME), "appActor");
         actorContext.setAppActor(appActor);
-
-        rpcManagerActor = system.actorOf(Props.create(new RpcManagerActor.ActorCreator(actorContext)).withDispatcher(CORE_DISPATCHER_NAME),
-                "rpcManagerActor");
-
-        ActorRef statsActor = system.actorOf(Props.create(new StatsActor.ActorCreator(actorContext)).withDispatcher(CORE_DISPATCHER_NAME), "statsActor");
-        actorContext.setStatsActor(statsActor);
 
         rpcService.init(this);
         log.info("Actor system initialized.");
