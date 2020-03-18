@@ -7,6 +7,8 @@ import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * RPC集群服务，用于接受和发送RPC消息
@@ -14,15 +16,17 @@ import java.io.IOException;
 public class GRpcService extends ClusterRpcServiceGrpc.ClusterRpcServiceImplBase implements RpcService{
     // RPC的Server对象
     private Server server;
+    // RPC通讯会话Map
+    private Map<ClusterAPIProtos.ServerAddress, RpcSession> rpcSessions = new ConcurrentHashMap<>();
 
     /**
-     * 接受消息
+     * 服务器端接受消息
      */
-    public io.grpc.stub.StreamObserver<com.ziapple.server.gen.cluster.ClusterAPIProtos.ClusterMessage> handleMsgs(
-            io.grpc.stub.StreamObserver<com.ziapple.server.gen.cluster.ClusterAPIProtos.ClusterMessage> responseObserver) {
+    public StreamObserver<ClusterAPIProtos.ClusterMessage> handleMsgs(
+            StreamObserver<ClusterAPIProtos.ClusterMessage> responseObserver) {
         return new StreamObserver<ClusterAPIProtos.ClusterMessage>() {
             /**
-             * 接受客户端消息
+             * 接受客户端消息，交给本地处理
              * @param msg
              */
             public void onNext(ClusterAPIProtos.ClusterMessage msg) {
@@ -67,7 +71,23 @@ public class GRpcService extends ClusterRpcServiceGrpc.ClusterRpcServiceImplBase
      */
     @Override
     public void onSendMsg(ClusterAPIProtos.ServerAddress serverAddress, ClusterAPIProtos.ClusterMessage clusterMessage) {
-        // 判断与服务器是否建立Session会话
+        // 判断与服务器是否建立Session会话，没有则创建
+        checkSession(serverAddress);
+        RpcSession rpcSession = rpcSessions.get(serverAddress);
+        rpcSession.tell(clusterMessage);
+    }
+
+    public void checkSession(ClusterAPIProtos.ServerAddress serverAddress){
+        RpcSession rpcSession = rpcSessions.get(serverAddress);
+        if(rpcSession == null){
+            rpcSession = new RpcSessionImpl(serverAddress);
+            rpcSession.initSession();
+            rpcSessions.put(serverAddress, rpcSession);
+        }else{
+            if(!rpcSession.checkSession()){// 如果连接断开，重新建立连接
+                rpcSession.initSession();
+            }
+        }
     }
 
 }
