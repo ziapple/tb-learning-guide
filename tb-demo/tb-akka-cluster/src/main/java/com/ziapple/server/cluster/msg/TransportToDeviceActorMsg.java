@@ -15,25 +15,21 @@
  */
 package com.ziapple.server.cluster.msg;
 
-import com.ziapple.server.cluster.msg.MsgType;
-import com.ziapple.server.cluster.msg.TbActorMsg;
 import com.ziapple.server.data.id.EntityId;
 import lombok.Data;
 
 @Data
-public class SendToClusterMsg implements TbActorMsg {
-
-    private TbActorMsg msg;
+public class TransportToDeviceActorMsg implements TbActorMsg {
+    private String msg;
     private EntityId entityId;
 
-    public SendToClusterMsg(EntityId entityId, TbActorMsg msg) {
+    public TransportToDeviceActorMsg(EntityId entityId, String msg) {
         this.entityId = entityId;
         this.msg = msg;
     }
 
-
     @Override
     public MsgType getMsgType() {
-        return MsgType.SEND_TO_CLUSTER_MSG;
+        return MsgType.TRANSPORT_TO_DEVICE_MSG;
     }
 }

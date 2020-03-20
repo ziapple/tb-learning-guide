@@ -4,9 +4,6 @@ import com.ziapple.server.gen.cluster.ClusterAPIProtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 模拟MqttServer发送给Cluster集群消息
  */

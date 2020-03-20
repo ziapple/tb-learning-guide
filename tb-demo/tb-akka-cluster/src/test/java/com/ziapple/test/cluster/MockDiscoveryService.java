@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.server.cluster;
+package com.ziapple.test.cluster;
 
+import com.ziapple.server.cluster.DiscoveryService;
+import com.ziapple.server.cluster.ServerAddress;
+import com.ziapple.server.cluster.ServerInstance;
+import com.ziapple.server.cluster.ServerType;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

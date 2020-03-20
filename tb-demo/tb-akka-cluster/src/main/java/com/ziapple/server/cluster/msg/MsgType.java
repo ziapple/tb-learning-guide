@@ -35,4 +35,9 @@ public enum MsgType {
      * 集群消息
      */
     SEND_TO_CLUSTER_MSG,
+
+    /**
+     * 设备时序消息
+     */
+    TRANSPORT_TO_DEVICE_MSG
 }

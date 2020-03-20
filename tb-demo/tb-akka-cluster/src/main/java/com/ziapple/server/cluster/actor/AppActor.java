@@ -16,38 +16,47 @@
 package com.ziapple.server.cluster.actor;
 
 import akka.actor.ActorRef;
-import akka.actor.SupervisorStrategy;
+import akka.actor.Props;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.ziapple.server.cluster.ServerAddress;
-import com.ziapple.server.cluster.msg.SendToClusterMsg;
+import com.ziapple.server.cluster.msg.TransportToDeviceActorMsg;
 import com.ziapple.server.cluster.msg.TbActorMsg;
-import com.ziapple.server.data.id.TenantId;
-
-import java.util.Optional;
-import java.util.UUID;
+import com.ziapple.server.data.id.DeviceId;
 
 /**
  * thingsboard主Actor，接收设备端发来的消息
  * 1. 从{@code LocalTranportService}接收到的Mqtt消息全部交给AppActor处理
  */
 public class AppActor extends ContextAwareActor {
+    private final BiMap<DeviceId, ActorRef> deviceActors;
+
     public AppActor(ActorSystemContext systemContext) {
         super(systemContext);
+        this.deviceActors = HashBiMap.create();
+    }
+
+    public static class ActorCreator extends ContextBasedCreator<AppActor> {
+        private static final long serialVersionUID = 1L;
+        public ActorCreator(ActorSystemContext context) {
+            super(context);
+        }
+        @Override
+        public AppActor create() {
+            return new AppActor(context);
+        }
     }
 
     /**
      * 消息处理
      * @param msg
-     * @return
      */
     @Override
     protected boolean process(TbActorMsg msg) {
         switch (msg.getMsgType()) {
             case APP_INIT_MSG:  // APP初始化
                 break;
-            case SEND_TO_CLUSTER_MSG:   // 发送给集群消息
-                onPossibleClusterMsg((SendToClusterMsg) msg);
+            case TRANSPORT_TO_DEVICE_MSG:   // 发送给集群消息
+                onToDeviceActorMsg((TransportToDeviceActorMsg) msg);
                 break;
             default:
                 return false;
@@ -55,18 +64,29 @@ public class AppActor extends ContextAwareActor {
         return true;
     }
 
-
     /**
-     * 发送集群消息
+     * 设备AppActor转发给TenantActor
+     * MqttTransportHandler -> LocalTransportService.process -> AppActor -> TenantActor
      * @param msg
      */
-    private void onPossibleClusterMsg(SendToClusterMsg msg) {
-        Optional<ServerAddress> address = systemContext.getRoutingService().resolveById(msg.getEntityId());
-        if (address.isPresent()) { // 获取集群节点，交给集群节点处理
-            systemContext.getRpcService().tell(
-                    systemContext.getEncodingService().convertToProtoDataMessage(address.get(), msg.getMsg()));
-        } else {    // 如果集群节点是自己，交给本地处理
-            self().tell(msg.getMsg(), ActorRef.noSender());
-        }
+    private void onToDeviceActorMsg(TransportToDeviceActorMsg msg) {
+        getOrCreateDeviceActor((DeviceId) msg.getEntityId()).tell(msg, ActorRef.noSender());
+    }
+
+    /**
+     * 获得设备actor，一个设备(deviceId)对应一个DeviceActor
+     * @param deviceId
+     * @return
+     */
+    private ActorRef getOrCreateDeviceActor(DeviceId deviceId) {
+        return deviceActors.computeIfAbsent(deviceId, k -> {
+            log.debug("[{}]Creating device actor.", deviceId);
+            ActorRef deviceActor = context().actorOf(Props.create(new DeviceActor.DeviceActorCreator(systemContext, deviceId))
+                            .withDispatcher(DefaultActorService.CORE_DISPATCHER_NAME)
+                    , deviceId.toString());
+            context().watch(deviceActor);
+            log.debug("[{}] Created device actor: {}.", deviceId, deviceActor);
+            return deviceActor;
+        });
     }
 }

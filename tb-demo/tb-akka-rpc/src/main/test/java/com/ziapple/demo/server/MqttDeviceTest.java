@@ -1,8 +1,6 @@
 package com.ziapple.demo.server;
 
 import com.ziapple.server.gen.cluster.ClusterAPIProtos;
-import org.junit.Before;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

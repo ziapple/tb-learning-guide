@@ -19,7 +19,6 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
 import java.nio.charset.Charset;
-import java.util.Random;
 
 
 /**

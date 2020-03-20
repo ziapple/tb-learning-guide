@@ -4,8 +4,6 @@ import com.ziapple.server.rpc.ClusterProto;
 import com.ziapple.server.rpc.ClusterServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.examples.calculate.CalculateProto;
-import io.grpc.examples.calculate.CalculateServiceGrpc;
 import io.grpc.stub.StreamObserver;
 
 import java.util.ArrayList;

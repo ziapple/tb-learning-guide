@@ -1,5 +1,7 @@
-package com.ziapple.server.cluster;
+package com.ziapple.test.cluster;
 
+import com.ziapple.server.cluster.ConsistentClusterRoutingService;
+import com.ziapple.server.cluster.ServerAddress;
 import com.ziapple.server.data.EntityType;
 import com.ziapple.server.data.id.EntityIdFactory;
 import com.ziapple.server.data.id.TenantId;

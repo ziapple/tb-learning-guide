@@ -16,13 +16,14 @@
 package com.ziapple.server.cluster;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 import javax.annotation.PostConstruct;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,20 +36,30 @@ import java.util.List;
 @Service
 @ConditionalOnProperty(prefix = "zk", value = "enabled", havingValue = "false", matchIfMissing = true)
 @Slf4j
-@DependsOn("environmentLogService")
 public class DummyDiscoveryService implements DiscoveryService {
+    private static final String FILE_PATH = "/cluster";
 
     @Autowired
     private ServerInstanceService serverInstance;
 
     @PostConstruct
     public void init() {
-        log.info("Initializing...");
+        log.info("正在注册当前服务到集群...");
+        publishCurrentServer();
     }
 
+    /**
+     * 发布当前服务到文件
+     */
     @Override
     public void publishCurrentServer() {
-        //Do nothing
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(ResourceUtils.getFile(FILE_PATH), true));
+            out.append(serverInstance.getSelf().getHost() + ":" + serverInstance.getSelf().getPort() + "\n");
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -61,9 +72,30 @@ public class DummyDiscoveryService implements DiscoveryService {
         return serverInstance.getSelf();
     }
 
+    /**
+     * 读取集群服务器
+     * @return
+     */
     @Override
     public List<ServerInstance> getOtherServers() {
-        return Collections.emptyList();
+        List<ServerInstance> list = new ArrayList<>();
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(ResourceUtils.getFile(FILE_PATH)));
+            String str = null;
+            while((str = in.readLine()) != null){//按行读取
+                list.add(new ServerInstance(new ServerAddress(
+                        str.substring(0, str.indexOf(":")),
+                        Integer.valueOf(str.substring(str.indexOf(":") + 1)),
+                        ServerType.CORE)));
+            }
+            in.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 
 

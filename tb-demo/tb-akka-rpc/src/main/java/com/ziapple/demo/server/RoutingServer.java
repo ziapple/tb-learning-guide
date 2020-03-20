@@ -2,9 +2,6 @@ package com.ziapple.demo.server;
 
 import com.ziapple.server.gen.cluster.ClusterAPIProtos;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * 模拟Cluster路由服务
  */

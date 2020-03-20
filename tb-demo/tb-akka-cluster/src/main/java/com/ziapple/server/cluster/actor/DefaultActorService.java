@@ -19,25 +19,15 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.Terminated;
-import com.google.protobuf.ByteString;
 import com.ziapple.server.cluster.DiscoveryService;
 import com.ziapple.server.cluster.ServerAddress;
-import com.ziapple.server.cluster.ServerInstance;
-import com.ziapple.server.cluster.msg.SendToClusterMsg;
-import com.ziapple.server.cluster.msg.TbActorMsg;
 import com.ziapple.server.cluster.rpc.ClusterRpcService;
 import com.ziapple.server.cluster.rpc.RpcBroadcastMsg;
 import com.ziapple.server.cluster.rpc.RpcSessionCreateRequestMsg;
-import com.ziapple.server.data.Device;
-import com.ziapple.server.data.id.DeviceId;
-import com.ziapple.server.data.id.EntityId;
-import com.ziapple.server.data.id.TenantId;
 import com.ziapple.server.gen.cluster.ClusterAPIProtos;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import scala.concurrent.Await;
@@ -82,6 +72,11 @@ public class DefaultActorService implements ActorService {
 
     private ActorRef rpcManagerActor;
 
+    @Value("${cluster.stats.enabled:false}")
+    private boolean statsEnabled;
+    private final AtomicInteger sentClusterMsgs = new AtomicInteger(0);
+    private final AtomicInteger receivedClusterMsgs = new AtomicInteger(0);
+
     /**
      * 初始化ActorSystem
      * 1. 创建AppActor、RPCMangerActor、StatsActor三个核心的Actor
@@ -92,24 +87,57 @@ public class DefaultActorService implements ActorService {
         log.info("Initializing Actor system.");
         actorContext.setActorService(this);
         system = ActorSystem.create(ACTOR_SYSTEM_NAME, actorContext.getConfig());
-        /**
         actorContext.setActorSystem(system);
-
-        appActor = system.actorOf(Props.create(new AppActor(actorContext)).withDispatcher(APP_DISPATCHER_NAME), "appActor");
+        appActor = system.actorOf(Props.create(new AppActor.ActorCreator(actorContext)).withDispatcher(APP_DISPATCHER_NAME), "appActor");
         actorContext.setAppActor(appActor);
-
         rpcService.init(this);
-        log.info("Actor system initialized.");**/
+        //rpcManagerActor = system.actorOf(Props.create(new RpcManagerActor.ActorCreator(actorContext)).withDispatcher(CORE_DISPATCHER_NAME),
+                //"rpcManagerActor");
+        log.info("Actor system initialized.");
+    }
+
+    /**
+     * 关闭ActorSystem
+     */
+    @PreDestroy
+    public void stopActorSystem() {
+        Future<Terminated> status = system.terminate();
+        try {
+            Terminated terminated = Await.result(status, Duration.Inf());
+            log.info("Actor system terminated: {}", terminated);
+        } catch (Exception e) {
+            log.error("Failed to terminate actor system.", e);
+        }
+    }
+
+    /**
+     * 定期打印收到和发送给Cluster的消息
+     */
+    @Scheduled(fixedDelayString = "${cluster.stats.print_interval_ms}")
+    public void printStats() {
+        if (statsEnabled) {
+            int sent = sentClusterMsgs.getAndSet(0);
+            int received = receivedClusterMsgs.getAndSet(0);
+            if (sent > 0 || received > 0) {
+                log.info("Cluster msgs sent [{}] received [{}]", sent, received);
+            }
+        }
     }
 
     @Override
-    public void onReceivedMsg(ServerAddress remoteServer, ClusterAPIProtos.ClusterMessage msg) {
-
+    public void onReceivedMsg(ServerAddress source, ClusterAPIProtos.ClusterMessage msg) {
+        if (statsEnabled) {
+            receivedClusterMsgs.incrementAndGet();
+        }
+        ServerAddress serverAddress = new ServerAddress(source.getHost(), source.getPort(), source.getServerType());
     }
 
     @Override
     public void onSendMsg(ClusterAPIProtos.ClusterMessage msg) {
-
+        if (statsEnabled) {
+            sentClusterMsgs.incrementAndGet();
+        }
+        //rpcManagerActor.tell(msg, ActorRef.noSender());
     }
 
     @Override

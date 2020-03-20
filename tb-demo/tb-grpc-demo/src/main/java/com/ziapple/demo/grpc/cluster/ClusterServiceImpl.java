@@ -2,8 +2,6 @@ package com.ziapple.demo.grpc.cluster;
 
 import com.ziapple.server.rpc.ClusterProto;
 import com.ziapple.server.rpc.ClusterServiceGrpc;
-import io.grpc.examples.calculate.CalculateProto;
-import io.grpc.examples.calculate.CalculateServiceGrpc;
 import io.grpc.stub.StreamObserver;
 
 import java.util.logging.Logger;
