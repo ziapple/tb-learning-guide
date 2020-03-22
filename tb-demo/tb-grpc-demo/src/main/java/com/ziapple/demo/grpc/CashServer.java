@@ -10,13 +10,13 @@ public class CashServer extends CashServiceGrpc.CashServiceImplBase{
     private int port = 50051;
     private Server server;
 
-    public StreamObserver<CashRequest> dealCash(StreamObserver<CashReply> responseObserver) {
-        return new StreamObserver<CashRequest>() {
+    public StreamObserver<CashProto.CashRequest> dealCash(StreamObserver<CashProto.CashReply> responseObserver) {
+        return new StreamObserver<CashProto.CashRequest>() {
             // 接受客户端消息
             @Override
-            public void onNext(CashRequest cashRequest) {
+            public void onNext(CashProto.CashRequest cashRequest) {
                 System.out.println("收到客户端消息：user->" + cashRequest.getUser() + ", money" + cashRequest.getMoney());
-                CashReply reply = CashReply.newBuilder().setStatus("1").build();
+                CashProto.CashReply reply = CashProto.CashReply.newBuilder().setStatus("1").build();
                 responseObserver.onNext(reply);
             }
 
