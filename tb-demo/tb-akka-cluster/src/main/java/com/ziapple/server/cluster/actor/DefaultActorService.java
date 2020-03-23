@@ -23,6 +23,7 @@ import com.ziapple.server.cluster.DiscoveryService;
 import com.ziapple.server.cluster.ServerAddress;
 import com.ziapple.server.cluster.rpc.ClusterRpcService;
 import com.ziapple.server.cluster.rpc.RpcBroadcastMsg;
+import com.ziapple.server.cluster.rpc.RpcManagerActor;
 import com.ziapple.server.cluster.rpc.RpcSessionCreateRequestMsg;
 import com.ziapple.server.gen.cluster.ClusterAPIProtos;
 import lombok.extern.slf4j.Slf4j;
@@ -91,8 +92,7 @@ public class DefaultActorService implements ActorService {
         appActor = system.actorOf(Props.create(new AppActor.ActorCreator(actorContext)).withDispatcher(APP_DISPATCHER_NAME), "appActor");
         actorContext.setAppActor(appActor);
         rpcService.init(this);
-        //rpcManagerActor = system.actorOf(Props.create(new RpcManagerActor.ActorCreator(actorContext)).withDispatcher(CORE_DISPATCHER_NAME),
-                //"rpcManagerActor");
+        rpcManagerActor = system.actorOf(Props.create(new RpcManagerActor.ActorCreator(actorContext)).withDispatcher(CORE_DISPATCHER_NAME), "rpcManagerActor");
         log.info("Actor system initialized.");
     }
 
@@ -137,7 +137,7 @@ public class DefaultActorService implements ActorService {
         if (statsEnabled) {
             sentClusterMsgs.incrementAndGet();
         }
-        //rpcManagerActor.tell(msg, ActorRef.noSender());
+        rpcManagerActor.tell(msg, ActorRef.noSender());
     }
 
     @Override

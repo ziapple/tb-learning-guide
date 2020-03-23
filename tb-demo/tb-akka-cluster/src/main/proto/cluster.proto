@@ -48,4 +48,6 @@ message MessageMataInfo {
 enum MessageType {
   // 给Actro的消息
   CLUSTER_ACTOR_MESSAGE = 0;
+  // RPC连接消息
+  CONNECT_RPC_MESSAGE = 1;
 }

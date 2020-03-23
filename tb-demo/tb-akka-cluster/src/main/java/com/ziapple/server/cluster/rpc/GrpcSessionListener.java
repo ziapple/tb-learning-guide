@@ -15,21 +15,18 @@
  */
 package com.ziapple.server.cluster.rpc;
 
-import com.ziapple.server.cluster.ServerAddress;
 import com.ziapple.server.gen.cluster.ClusterAPIProtos;
-import io.grpc.stub.StreamObserver;
-import lombok.Data;
-
-import java.util.UUID;
 
 /**
  * @author Andrew Shvayka
  */
-@Data
-public final class RpcSessionCreateRequestMsg {
+public interface GrpcSessionListener {
 
-    private final UUID msgUid;
-    private final ServerAddress remoteAddress;
-    private final StreamObserver<ClusterAPIProtos.ClusterMessage> responseObserver;
+    void onConnected(GrpcSession session);
 
+    void onDisconnected(GrpcSession session);
+
+    void onReceiveClusterGrpcMsg(GrpcSession session, ClusterAPIProtos.ClusterMessage clusterMessage);
+
+    void onError(GrpcSession session, Throwable t);
 }

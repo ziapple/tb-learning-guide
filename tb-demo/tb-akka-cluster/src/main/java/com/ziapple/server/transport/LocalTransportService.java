@@ -38,8 +38,10 @@ public class LocalTransportService {
         TransportToDeviceActorMsg transportToDeviceActorMsg = new TransportToDeviceActorMsg(deviceId, msg);
         Optional<ServerAddress> address = routingService.resolveById(deviceId);
         if (address.isPresent()) {// 远程调用
+            log.info("远程调用");
             rpcService.tell(encodingService.convertToProtoDataMessage(address.get(), transportToDeviceActorMsg));
         } else {// 运行本地Actor
+            log.info("本地调用");
             actorContext.getAppActor().tell(transportToDeviceActorMsg, ActorRef.noSender());
         }
     }

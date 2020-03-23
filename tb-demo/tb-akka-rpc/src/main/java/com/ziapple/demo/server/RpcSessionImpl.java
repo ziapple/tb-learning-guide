@@ -45,6 +45,7 @@ public class RpcSessionImpl implements RpcSession{
     }
 
     // 建立会话
+    @Override
     public void initSession(){
         // 初始化channel
         ManagedChannel managedChannel = ManagedChannelBuilder.forAddress(serverAddress.getHost(),serverAddress.getPort()).usePlaintext().build();
@@ -54,6 +55,7 @@ public class RpcSessionImpl implements RpcSession{
     }
 
     // 关闭会话
+    @Override
     public void closeSession(){
         isSessionOpen = false;
         ManagedChannel managedChannel = (ManagedChannel)clusterRpcServiceStub.getChannel();

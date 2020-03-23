@@ -19,7 +19,6 @@ import com.google.protobuf.ByteString;
 import com.ziapple.server.cluster.ServerAddress;
 import com.ziapple.server.cluster.ServerInstance;
 import com.ziapple.server.cluster.ServerInstanceService;
-import com.ziapple.server.cluster.actor.DefaultActorService;
 import com.ziapple.server.cluster.msg.TbActorMsg;
 import com.ziapple.server.gen.cluster.ClusterAPIProtos;
 import com.ziapple.server.gen.cluster.ClusterRpcServiceGrpc;
