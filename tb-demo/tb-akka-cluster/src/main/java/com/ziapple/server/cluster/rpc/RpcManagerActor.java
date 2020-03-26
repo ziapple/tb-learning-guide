@@ -15,10 +15,7 @@
  */
 package com.ziapple.server.cluster.rpc;
 
-import akka.actor.ActorRef;
-import akka.actor.OneForOneStrategy;
-import akka.actor.Props;
-import akka.actor.SupervisorStrategy;
+import akka.actor.*;
 import com.ziapple.server.cluster.ServerAddress;
 import com.ziapple.server.cluster.ServerInstance;
 import com.ziapple.server.cluster.ServerType;
@@ -33,6 +30,7 @@ import scala.concurrent.duration.Duration;
 import java.util.*;
 
 /**
+ * 管理SessionActor的Actor，用于创建，关闭，断开，检查SessionActor
  * @author Andrew Shvayka
  */
 public class RpcManagerActor extends ContextAwareActor {
@@ -126,6 +124,11 @@ public class RpcManagerActor extends ContextAwareActor {
         return false;
     }
 
+    /**
+     * 从sessionMap里面移除session
+     * @param reconnect
+     * @param remoteAddress
+     */
     private void onSessionClose(boolean reconnect, ServerAddress remoteAddress) {
         log.info("[{}] session closed. Should reconnect: {}", remoteAddress, reconnect);
         SessionActorInfo sessionRef = sessionActors.get(remoteAddress);
@@ -139,6 +142,11 @@ public class RpcManagerActor extends ContextAwareActor {
         }
     }
 
+    /**
+     * 发送Session创建请求，一个remoteAddress，一个sessionId对应一个SessionActor
+     * 知识创建Session，还没有真正建立连接
+     * @param msg
+     */
     private void onCreateSessionRequest(RpcSessionCreateRequestMsg msg) {
         if (msg.getRemoteAddress() != null) {
             if (!sessionActors.containsKey(msg.getRemoteAddress())) {
@@ -150,6 +158,12 @@ public class RpcManagerActor extends ContextAwareActor {
         }
     }
 
+    /**
+     * session放进map里，一个sessionId对应一个sessionActor
+     * @param remoteAddress
+     * @param uuid
+     * @param sender
+     */
     private void register(ServerAddress remoteAddress, UUID uuid, ActorRef sender) {
         sessionActors.put(remoteAddress, new SessionActorInfo(uuid, sender));
         log.info("[{}][{}] Registering session actor.", remoteAddress, uuid);
@@ -162,6 +176,11 @@ public class RpcManagerActor extends ContextAwareActor {
         }
     }
 
+    /**
+     * 初始化RPCSessionActor
+     * @param msg
+     * @return
+     */
     private ActorRef createSessionActor(RpcSessionCreateRequestMsg msg) {
         log.info("[{}] Creating session actor.", msg.getMsgUid());
         ActorRef actor = context().actorOf(

@@ -31,6 +31,7 @@ import static com.ziapple.server.gen.cluster.ClusterAPIProtos.MessageType.CONNEC
 
 /**
  * @author Andrew Shvayka
+ * 初始化RPC的Session连接
  */
 @Slf4j
 public class RpcSessionActor extends ContextAwareActor {
@@ -100,6 +101,7 @@ public class RpcSessionActor extends ContextAwareActor {
 
             session.setOutputStream(outputStream);
             session.initOutputStream();
+            // 给服务端发送建立连接的请求消息
             outputStream.onNext(toConnectMsg());
         }
     }
