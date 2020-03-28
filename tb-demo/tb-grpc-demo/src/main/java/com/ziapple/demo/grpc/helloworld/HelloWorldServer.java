@@ -1,8 +1,5 @@
-package com.ziapple.demo.grpc;
+package com.ziapple.demo.grpc.helloworld;
 
-import com.ziapple.demo.grpc.helloworld.GreeterGrpc;
-import com.ziapple.demo.grpc.helloworld.HelloReply;
-import com.ziapple.demo.grpc.helloworld.HelloRequest;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;

@@ -3,10 +3,10 @@ package com.ziapple.demo.server;
 /**
  * 模拟MqttServer发送给Cluster集群消息
  */
-public interface MQTTServer {
+public interface MqttServer {
     /**
      * 将接受到的消息发送给Cluster处理
      * @param mqttMsg
      */
-    void process(String mqttMsg);
+    public void process(int entityId, String mqttMsg);
 }

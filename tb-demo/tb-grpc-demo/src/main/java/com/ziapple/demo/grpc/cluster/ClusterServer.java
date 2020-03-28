@@ -1,4 +1,4 @@
-package com.ziapple.demo.grpc;
+package com.ziapple.demo.grpc.cluster;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -11,9 +11,9 @@ import java.util.logging.Logger;
  * @Date 2018/7/15 16:28
  * @Mail zsunny@yeah.net
  */
-public class CalculatorServer {
+public class ClusterServer {
 
-    private static final Logger logger = Logger.getLogger(CalculatorServer.class.getName());
+    private static final Logger logger = Logger.getLogger(ClusterServer.class.getName());
 
     private static final int DEFAULT_PORT = 8088;
 
@@ -21,15 +21,15 @@ public class CalculatorServer {
 
     private Server server;
 
-    public CalculatorServer(int port) {
+    public ClusterServer(int port) {
         this(port, ServerBuilder.forPort(port));
     }
 
-    public CalculatorServer(int port, ServerBuilder<?> serverBuilder) {
+    public ClusterServer(int port, ServerBuilder<?> serverBuilder) {
         this.port = port;
 
         //构造服务器，添加我们实际的服务
-        server = serverBuilder.addService(new CalculateServiceImpl()).build();
+        server = serverBuilder.addService(new ClusterServiceImpl()).build();
     }
 
     private void start() throws IOException {
@@ -38,9 +38,7 @@ public class CalculatorServer {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-
-                CalculatorServer.this.stop();
-
+                ClusterServer.this.stop();
             }
         });
 
@@ -62,12 +60,12 @@ public class CalculatorServer {
 
     public static void main(String[] args) {
 
-        CalculatorServer addtionServer;
+        ClusterServer addtionServer;
 
         if(args.length > 0){
-            addtionServer = new CalculatorServer(Integer.parseInt(args[0]));
+            addtionServer = new ClusterServer(Integer.parseInt(args[0]));
         }else{
-            addtionServer = new CalculatorServer(DEFAULT_PORT);
+            addtionServer = new ClusterServer(DEFAULT_PORT);
         }
 
         try {

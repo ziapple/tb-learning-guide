@@ -16,9 +16,6 @@
         <module>tb-msg</module>
         <module>tb-application</module>
         <module>tb-demo</module>
-        <module>tb-ui</module>
-        <module>tb-akaka-rpc</module>
-        <module>tb-akka-rpc</module>
     </modules>
     <packaging>pom</packaging>
 

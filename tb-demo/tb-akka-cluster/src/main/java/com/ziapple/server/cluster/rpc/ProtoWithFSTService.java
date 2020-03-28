@@ -31,8 +31,6 @@ import static com.ziapple.server.gen.cluster.ClusterAPIProtos.MessageType.CLUSTE
 @Slf4j
 @Service
 public class ProtoWithFSTService implements DataDecodingEncodingService {
-
-
     private final FSTConfiguration config = FSTConfiguration.createDefaultConfiguration();
 
     /**

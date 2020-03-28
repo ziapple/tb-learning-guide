@@ -1,7 +1,9 @@
-package com.ziapple.demo.grpc;
+package com.ziapple.demo.grpc.caculate;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.examples.calculate.CalculateProto;
+import io.grpc.examples.calculate.CalculateServiceGrpc;
 import io.grpc.stub.StreamObserver;
 
 import java.util.ArrayList;
@@ -16,11 +18,11 @@ import java.util.logging.Logger;
  * @Date 2018/7/15 16:28
  * @Mail zsunny@yeah.net
  */
-public class CashClient1 {
+public class CalculatorClient {
 
     private static final String DEFAULT_HOST = "localhost";
 
-    private static final int DEFAULT_PORT = 50051;
+    private static final int DEFAULT_PORT = 8088;
 
     private static final int VALUE_NUM = 10;
 
@@ -29,17 +31,17 @@ public class CashClient1 {
     private static final Logger log = Logger.getLogger("CaculateClient");
 
     //这里用异步请求存根
-    private CashServiceGrpc.CashServiceStub cashServiceStub;
+    private CalculateServiceGrpc.CalculateServiceStub calculateServiceStub;
 
-    public CashClient1(String host, int port) {
+    public CalculatorClient(String host, int port) {
 
         //使用明文通讯，这里简单化，实际生产环境需要通讯加密
-        this(ManagedChannelBuilder.forAddress(host,port).usePlaintext().build());
+        this(ManagedChannelBuilder.forAddress(host,port).usePlaintext(true).build());
 
     }
 
-    public CashClient1(ManagedChannel managedChannel) {
-        this.cashServiceStub = CashServiceGrpc.newStub(managedChannel);
+    public CalculatorClient(ManagedChannel managedChannel) {
+        this.calculateServiceStub = CalculateServiceGrpc.newStub(managedChannel);
     }
 
     /**
@@ -51,9 +53,9 @@ public class CashClient1 {
         //判断调用状态。在内部类中被访问，需要加final修饰
         final CountDownLatch countDownLatch = new CountDownLatch(1);
 
-        StreamObserver<CashProto.CashReply> responseObserver = new StreamObserver<CashProto.CashReply>() {
+        StreamObserver<CalculateProto.Result> responseObserver = new StreamObserver<CalculateProto.Result>() {
             private int cnt = 0;
-            public void onNext(CashProto.CashReply result) {
+            public void onNext(CalculateProto.Result result) {
                 //此处直接打印结果，其他也可用回调进行复杂处理
                 log.info("第" + (++cnt) + "次调用得到结果为:" + result);
             }
@@ -65,15 +67,25 @@ public class CashClient1 {
 
             public void onCompleted() {
                 log.info("调用完成");
-                countDownLatch.countDown();
+                // 关闭连接
+                ManagedChannel channel = (ManagedChannel)calculateServiceStub.getChannel();
+                try {
+                    channel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
+                    while(channel.isTerminated()) {
+                        countDownLatch.countDown();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    countDownLatch.countDown();
+                }
             }
 
         };
 
-        StreamObserver<CashProto.CashRequest> requestObserver = cashServiceStub.dealCash(responseObserver);
+        StreamObserver<CalculateProto.Value> requestObserver = calculateServiceStub.getResult(responseObserver);
 
         for(int num: nums){
-            CashProto.CashRequest value = CashProto.CashRequest.newBuilder().setUser("ziapple").setMoney(num).build();
+            CalculateProto.Value value = CalculateProto.Value.newBuilder().setValue(num).build();
             requestObserver.onNext(value);
 
             //判断调用结束状态。如果整个调用已经结束，继续发送数据不会报错，但是会被舍弃
@@ -99,7 +111,7 @@ public class CashClient1 {
 
     public static void main(String[] args) {
 
-        CashClient1 additionClient = new CashClient1(DEFAULT_HOST,DEFAULT_PORT);
+        CalculatorClient additionClient = new CalculatorClient(DEFAULT_HOST,DEFAULT_PORT);
 
         //生成value值
         List<Integer> list = new ArrayList<Integer>();

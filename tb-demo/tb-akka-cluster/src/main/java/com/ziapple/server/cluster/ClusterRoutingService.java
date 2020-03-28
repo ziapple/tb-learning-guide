@@ -15,8 +15,9 @@
  */
 package com.ziapple.server.cluster;
 
+import com.ziapple.server.data.id.EntityId;
+
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * 集群路由服务
@@ -28,6 +29,6 @@ public interface ClusterRoutingService extends DiscoveryServiceListener {
 
     ServerAddress getCurrentServer();
 
-    Optional<ServerAddress> resolveById(UUID entityId);
+    Optional<ServerAddress> resolveById(EntityId entityId);
 
 }

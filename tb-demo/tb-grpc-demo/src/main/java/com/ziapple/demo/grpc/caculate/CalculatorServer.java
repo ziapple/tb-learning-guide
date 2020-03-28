@@ -1,4 +1,4 @@
-package com.ziapple.demo.grpc;
+package com.ziapple.demo.grpc.caculate;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
@@ -11,25 +11,25 @@ import java.util.logging.Logger;
  * @Date 2018/7/15 16:28
  * @Mail zsunny@yeah.net
  */
-public class CashServer1 {
+public class CalculatorServer {
 
-    private static final Logger logger = Logger.getLogger(CashServer1.class.getName());
+    private static final Logger logger = Logger.getLogger(CalculatorServer.class.getName());
 
-    private static final int DEFAULT_PORT = 50051;
+    private static final int DEFAULT_PORT = 8088;
 
     private int port;//服务端口号
 
     private Server server;
 
-    public CashServer1(int port) {
+    public CalculatorServer(int port) {
         this(port, ServerBuilder.forPort(port));
     }
 
-    public CashServer1(int port, ServerBuilder<?> serverBuilder) {
+    public CalculatorServer(int port, ServerBuilder<?> serverBuilder) {
         this.port = port;
 
         //构造服务器，添加我们实际的服务
-        server = serverBuilder.addService(new CashServiceImpl()).build();
+        server = serverBuilder.addService(new CalculateServiceImpl()).build();
     }
 
     private void start() throws IOException {
@@ -39,7 +39,7 @@ public class CashServer1 {
             @Override
             public void run() {
 
-                CashServer1.this.stop();
+                CalculatorServer.this.stop();
 
             }
         });
@@ -62,12 +62,12 @@ public class CashServer1 {
 
     public static void main(String[] args) {
 
-        CashServer1 addtionServer;
+        CalculatorServer addtionServer;
 
         if(args.length > 0){
-            addtionServer = new CashServer1(Integer.parseInt(args[0]));
+            addtionServer = new CalculatorServer(Integer.parseInt(args[0]));
         }else{
-            addtionServer = new CashServer1(DEFAULT_PORT);
+            addtionServer = new CalculatorServer(DEFAULT_PORT);
         }
 
         try {

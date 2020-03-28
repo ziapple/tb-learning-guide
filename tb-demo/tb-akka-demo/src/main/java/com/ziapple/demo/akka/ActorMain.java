@@ -15,19 +15,21 @@ import akka.routing.BalancingPool;
  * 如果需要利用一条生产线生成多种汽车型号，并行生产，利用Actoriu可以，不同的底盘Actor、发动机Actor等可以生产出不同型号的底盘、发动机
  */
 public class ActorMain {
-
     public static void main(String[] args) {
         //生成角色系统
         ActorSystem system = ActorSystem.create("msgSystem");
 
         //生成角色 ProduceMsgActor
-        ActorRef produceMsgActor = system.actorOf(new BalancingPool(3).props(Props.create(ProduceMsgActor.class)), "ProduceMsgActor");
+        ActorRef produceMsgActor = system.actorOf(new BalancingPool(3).props(Props.create(ProduceActor.class)), "ProduceMsgActor");
+        System.out.println("生成produceActor" + produceMsgActor);
 
         //生成角色 DisposeMsgActor
-        ActorRef disposeMsgActor = system.actorOf(new BalancingPool(2).props(Props.create(DisposeMsgActor.class)), "DisposeMsgActor");
+        ActorRef disposeMsgActor = system.actorOf(new BalancingPool(2).props(Props.create(DisposeActor.class)), "DisposeMsgActor");
+        System.out.println("生成disposeMsgActor" + disposeMsgActor);
 
         //给produceMsgActor发消息请求,noSender表示没有发送者，属于系统发送的消息
-        produceMsgActor.tell("please produce msg1", ActorRef.noSender());
-
+        System.out.println("system给producer发送消息");
+        produceMsgActor.tell("Hello World", ActorRef.noSender());
+        produceMsgActor.tell("Hello World1", ActorRef.noSender());
     }
 }

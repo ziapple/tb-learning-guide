@@ -15,7 +15,9 @@
  */
 package com.ziapple.server.cluster.actor;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.Scheduler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -67,8 +69,13 @@ public class ActorSystemContext {
     @Getter
     private final Config config;
 
+    @Getter
     @Setter
     private ActorSystem actorSystem;
+
+    @Getter
+    @Setter
+    private ActorRef appActor;
 
     public ActorSystemContext() {
         config = ConfigFactory.parseResources(AKKA_CONF_FILE_NAME).withFallback(ConfigFactory.load());
@@ -76,5 +83,9 @@ public class ActorSystemContext {
 
     public static Exception toException(Throwable error) {
         return Exception.class.isInstance(error) ? (Exception) error : new Exception(error);
+    }
+
+    public Scheduler getScheduler() {
+        return actorSystem.scheduler();
     }
 }

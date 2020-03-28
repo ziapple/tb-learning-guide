@@ -15,13 +15,15 @@
  */
 package com.ziapple.server.cluster.msg;
 
+import java.io.Serializable;
+
 /**
  * Actor的消息
  * TbActorMsg是ClusterMessage的payload部分
  * payload采用字节码，需要通过{@link com.ziapple.server.cluster.rpc.ProtoWithFSTService}进行编解码
  * Created by ashvayka on 15.03.18.
  */
-public interface TbActorMsg {
+public interface TbActorMsg extends Serializable {
 
     MsgType getMsgType();
 

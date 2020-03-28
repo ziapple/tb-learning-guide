@@ -13,31 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.server.cluster.msg;
+package com.ziapple.server.cluster.actor;
 
-/**
- * 集群的消息类型
- * Created by ashvayka on 15.03.18.
- */
-public enum MsgType {
+import akka.japi.Creator;
 
-    /**
-     * ADDED/UPDATED/DELETED 集群事件
-     */
-    CLUSTER_EVENT_MSG,
+public abstract class ContextBasedCreator<T> implements Creator<T> {
 
-    /**
-     * App初始化消息
-     */
-    APP_INIT_MSG,
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * 集群消息
-     */
-    SEND_TO_CLUSTER_MSG,
+    protected final transient ActorSystemContext context;
 
-    /**
-     * 设备时序消息
-     */
-    TRANSPORT_TO_DEVICE_MSG
+    public ContextBasedCreator(ActorSystemContext context) {
+        super();
+        this.context = context;
+    }
 }

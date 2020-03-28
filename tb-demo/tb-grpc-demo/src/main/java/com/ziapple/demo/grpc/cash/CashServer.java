@@ -1,12 +1,15 @@
-package com.ziapple.demo.grpc;
+package com.ziapple.demo.grpc.cash;
 
+import com.ziapple.demo.grpc.CashReply;
+import com.ziapple.demo.grpc.CashRequest;
+import com.ziapple.demo.grpc.CashServiceGrpc;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
 
 import java.io.IOException;
 
-public class CashServer extends CashServiceGrpc.CashServiceImplBase{
+public class CashServer extends CashServiceGrpc.CashServiceImplBase {
     private int port = 50051;
     private Server server;
 

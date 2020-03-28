@@ -66,7 +66,7 @@ public class ClusterGrpcService extends ClusterRpcServiceGrpc.ClusterRpcServiceI
             new ConcurrentHashMap<>();
 
     /**
-     * 初始化本地RPC服务，有{@link DefaultActorService}调用
+     * 初始化本地RPC服务
      * @param listener
      */
     public void init(RpcMsgListener listener) {

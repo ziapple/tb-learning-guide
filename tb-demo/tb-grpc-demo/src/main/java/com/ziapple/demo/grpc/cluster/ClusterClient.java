@@ -1,9 +1,9 @@
-package com.ziapple.demo.grpc;
+package com.ziapple.demo.grpc.cluster;
 
+import com.ziapple.server.rpc.ClusterProto;
+import com.ziapple.server.rpc.ClusterServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.examples.calculate.CalculateProto;
-import io.grpc.examples.calculate.CalculateServiceGrpc;
 import io.grpc.stub.StreamObserver;
 
 import java.util.ArrayList;
@@ -18,8 +18,7 @@ import java.util.logging.Logger;
  * @Date 2018/7/15 16:28
  * @Mail zsunny@yeah.net
  */
-public class CalculatorClient {
-
+public class ClusterClient {
     private static final String DEFAULT_HOST = "localhost";
 
     private static final int DEFAULT_PORT = 8088;
@@ -28,20 +27,18 @@ public class CalculatorClient {
 
     private static final int VALUE_UPPER_BOUND = 10;
 
-    private static final Logger log = Logger.getLogger("CaculateClient");
+    private static final Logger log = Logger.getLogger("ClusterClient");
 
     //这里用异步请求存根
-    private CalculateServiceGrpc.CalculateServiceStub calculateServiceStub;
+    private ClusterServiceGrpc.ClusterServiceStub clusterServiceStub;
 
-    public CalculatorClient(String host, int port) {
-
+    public ClusterClient(String host, int port) {
         //使用明文通讯，这里简单化，实际生产环境需要通讯加密
         this(ManagedChannelBuilder.forAddress(host,port).usePlaintext(true).build());
-
     }
 
-    public CalculatorClient(ManagedChannel managedChannel) {
-        this.calculateServiceStub = CalculateServiceGrpc.newStub(managedChannel);
+    public ClusterClient(ManagedChannel managedChannel) {
+        this.clusterServiceStub = ClusterServiceGrpc.newStub(managedChannel);
     }
 
     /**
@@ -49,15 +46,20 @@ public class CalculatorClient {
      * @param nums 传到服务端的数据流
      */
     public void getResult( List<Integer> nums){
-
         //判断调用状态。在内部类中被访问，需要加final修饰
         final CountDownLatch countDownLatch = new CountDownLatch(1);
 
-        StreamObserver<CalculateProto.Result> responseObserver = new StreamObserver<CalculateProto.Result>() {
+<<<<<<< HEAD:tb-demo/tb-grpc-demo/src/main/java/com/ziapple/demo/grpc/CashClient1.java
+        StreamObserver<CashProto.CashReply> responseObserver = new StreamObserver<CashProto.CashReply>() {
             private int cnt = 0;
-            public void onNext(CalculateProto.Result result) {
+            public void onNext(CashProto.CashReply result) {
+=======
+        StreamObserver<ClusterProto.MsgResponse> responseObserver = new StreamObserver<ClusterProto.MsgResponse>() {
+            private int cnt = 0;
+            public void onNext(ClusterProto.MsgResponse response) {
+>>>>>>> 2b77655eaf16b86e3f81fca854b63646ef98c12d:tb-demo/tb-grpc-demo/src/main/java/com/ziapple/demo/grpc/cluster/ClusterClient.java
                 //此处直接打印结果，其他也可用回调进行复杂处理
-                log.info("第" + (++cnt) + "次调用得到结果为:" + result);
+                log.info("第" + (++cnt) + "次调用得到结果为:" + response.getStatus());
             }
 
             public void onError(Throwable throwable) {
@@ -67,17 +69,33 @@ public class CalculatorClient {
 
             public void onCompleted() {
                 log.info("调用完成");
-                countDownLatch.countDown();
+                // 关闭连接
+                ManagedChannel channel = (ManagedChannel)clusterServiceStub.getChannel();
+                try {
+                    channel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
+                    while(channel.isTerminated()) {
+                        countDownLatch.countDown();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    countDownLatch.countDown();
+                }
             }
-
         };
 
-        StreamObserver<CalculateProto.Value> requestObserver = calculateServiceStub.getResult(responseObserver);
+<<<<<<< HEAD:tb-demo/tb-grpc-demo/src/main/java/com/ziapple/demo/grpc/CashClient1.java
+        StreamObserver<CashProto.CashRequest> requestObserver = cashServiceStub.dealCash(responseObserver);
 
         for(int num: nums){
-            CalculateProto.Value value = CalculateProto.Value.newBuilder().setValue(num).build();
+            CashProto.CashRequest value = CashProto.CashRequest.newBuilder().setUser("ziapple").setMoney(num).build();
             requestObserver.onNext(value);
 
+=======
+        StreamObserver<ClusterProto.MsgRequest> requestObserver = clusterServiceStub.handleMsg(responseObserver);
+        for(int num: nums){
+            ClusterProto.MsgRequest request = ClusterProto.MsgRequest.newBuilder().setMsgType("msg").setPayload(String.valueOf(num)).build();
+            requestObserver.onNext(request);
+>>>>>>> 2b77655eaf16b86e3f81fca854b63646ef98c12d:tb-demo/tb-grpc-demo/src/main/java/com/ziapple/demo/grpc/cluster/ClusterClient.java
             //判断调用结束状态。如果整个调用已经结束，继续发送数据不会报错，但是会被舍弃
             if(countDownLatch.getCount() == 0){
                 return;
@@ -100,13 +118,11 @@ public class CalculatorClient {
 
 
     public static void main(String[] args) {
-
-        CalculatorClient additionClient = new CalculatorClient(DEFAULT_HOST,DEFAULT_PORT);
+        ClusterClient additionClient = new ClusterClient(DEFAULT_HOST,DEFAULT_PORT);
 
         //生成value值
         List<Integer> list = new ArrayList<Integer>();
         Random random = new Random();
-
         for(int i=0; i<VALUE_NUM; i++){
             //随机数符合 0-VALUE_UPPER_BOUND 均匀分布
             int value = random.nextInt(VALUE_UPPER_BOUND);
@@ -118,8 +134,6 @@ public class CalculatorClient {
 
         System.out.println("*************************getting result from server***************************");
         System.out.println();
-
         additionClient.getResult(list);
-
     }
 }

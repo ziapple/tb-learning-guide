@@ -3,6 +3,7 @@ syntax = "proto3";
 //生成多文件，可以将类都生成在一个文件中
 option java_multiple_files = false;
 //包名
+<<<<<<< HEAD
 option java_package = "com.ziapple.calculate";
 //生成的类名
 option java_outer_classname = "CalculateProto";
@@ -25,4 +26,24 @@ message Result {
     int32 sum = 1;
     int32 cnt = 2;
     double avg = 3;
+=======
+option java_package = "com.ziapple.server.rpc";
+//生成的类名
+option java_outer_classname = "ClusterProto";
+
+package cluster;
+
+// 定义服务
+service ClusterService {
+  rpc handleMsg (stream MsgRequest) returns (stream MsgResponse) {}
+}
+
+message MsgRequest {
+    string msgType = 1;
+    string payload = 2;
+}
+
+message MsgResponse {
+    string status = 1;
+>>>>>>> 2b77655eaf16b86e3f81fca854b63646ef98c12d
 }

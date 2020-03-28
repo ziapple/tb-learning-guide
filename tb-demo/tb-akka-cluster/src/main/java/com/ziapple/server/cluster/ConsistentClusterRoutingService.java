@@ -17,6 +17,7 @@ package com.ziapple.server.cluster;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
+import com.ziapple.server.data.id.EntityId;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,6 @@ import org.springframework.util.Assert;
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentNavigableMap;
 
 /**
@@ -82,7 +82,7 @@ public class ConsistentClusterRoutingService implements ClusterRoutingService {
     }
 
     @Override
-    public Optional<ServerAddress> resolveById(UUID entityId) {
+    public Optional<ServerAddress> resolveById(EntityId entityId) {
         return resolveByUuid(rootCircle, entityId);
     }
 
@@ -94,13 +94,13 @@ public class ConsistentClusterRoutingService implements ClusterRoutingService {
      * @param uuid
      * @return
      */
-    private Optional<ServerAddress> resolveByUuid(ConsistentHashCircle circle, UUID uuid) {
-        Assert.notNull(uuid);
+    private Optional<ServerAddress> resolveByUuid(ConsistentHashCircle circle, EntityId entityId) {
+        Assert.notNull(entityId);
         if (circle.isEmpty()) {
             return Optional.empty();
         }
-        Long hash = hashFunction.newHasher().putLong(uuid.getMostSignificantBits())
-                .putLong(uuid.getLeastSignificantBits()).hash().asLong();
+        Long hash = hashFunction.newHasher().putLong(entityId.getId().getMostSignificantBits())
+                .putLong(entityId.getId().getLeastSignificantBits()).hash().asLong();
         if (!circle.containsKey(hash)) {
             ConcurrentNavigableMap<Long, ServerInstance> tailMap =
                     circle.tailMap(hash);

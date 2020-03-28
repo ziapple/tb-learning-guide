@@ -1,4 +1,4 @@
-package com.ziapple.demo.grpc;
+package com.ziapple.demo.grpc.caculate;
 
 import io.grpc.examples.calculate.CalculateProto;
 import io.grpc.examples.calculate.CalculateServiceGrpc;
