@@ -15,29 +15,25 @@
  */
 package com.ziapple.server.cluster.rpc;
 
-import akka.actor.ActorRef;
-import akka.actor.OneForOneStrategy;
-import akka.actor.Props;
-import akka.actor.SupervisorStrategy;
+import akka.actor.*;
 import com.ziapple.server.cluster.ServerAddress;
+import com.ziapple.server.cluster.ServerInstance;
+import com.ziapple.server.cluster.ServerType;
+import com.ziapple.server.cluster.actor.ActorSystemContext;
+import com.ziapple.server.cluster.actor.ContextAwareActor;
+import com.ziapple.server.cluster.actor.ContextBasedCreator;
+import com.ziapple.server.cluster.actor.DefaultActorService;
+import com.ziapple.server.cluster.msg.TbActorMsg;
 import com.ziapple.server.gen.cluster.ClusterAPIProtos;
-import org.thingsboard.server.actors.ActorSystemContext;
-import org.thingsboard.server.actors.service.ContextAwareActor;
-import org.thingsboard.server.actors.service.ContextBasedCreator;
-import org.thingsboard.server.actors.service.DefaultActorService;
-import org.thingsboard.server.common.msg.TbActorMsg;
-import org.thingsboard.server.common.msg.cluster.ClusterEventMsg;
-import org.thingsboard.server.common.msg.cluster.ServerType;
-import org.thingsboard.server.service.cluster.discovery.ServerInstance;
 import scala.concurrent.duration.Duration;
 
 import java.util.*;
 
 /**
+ * 管理SessionActor的Actor，用于创建，关闭，断开，检查SessionActor
  * @author Andrew Shvayka
  */
 public class RpcManagerActor extends ContextAwareActor {
-
     private final Map<ServerAddress, SessionActorInfo> sessionActors;
     private final Map<ServerAddress, Queue<ClusterAPIProtos.ClusterMessage>> pendingMsgs;
     private final ServerAddress instance;
@@ -48,6 +44,7 @@ public class RpcManagerActor extends ContextAwareActor {
         this.pendingMsgs = new HashMap<>();
         this.instance = systemContext.getDiscoveryService().getCurrentServer().getServerAddress();
 
+        // 初始化RPC连接
         systemContext.getDiscoveryService().getOtherServers().stream()
                 .filter(otherServer -> otherServer.getServerAddress().compareTo(instance) > 0)
                 .forEach(otherServer -> onCreateSessionRequest(
@@ -64,23 +61,15 @@ public class RpcManagerActor extends ContextAwareActor {
     public void onReceive(Object msg) {
         if (msg instanceof ClusterAPIProtos.ClusterMessage) {
             onMsg((ClusterAPIProtos.ClusterMessage) msg);
+        } else if (msg instanceof RpcSessionCreateRequestMsg) {
+            onCreateSessionRequest((RpcSessionCreateRequestMsg) msg);
+        } else if (msg instanceof RpcSessionConnectedMsg) {
+            onSessionConnected((RpcSessionConnectedMsg) msg);
+        } else if (msg instanceof RpcSessionDisconnectedMsg) {
+            onSessionDisconnected((RpcSessionDisconnectedMsg) msg);
+        } else if (msg instanceof RpcSessionClosedMsg) {
+            onSessionClosed((RpcSessionClosedMsg) msg);
         }
-    }
-
-    private void onMsg(RpcBroadcastMsg msg) {
-        log.debug("Forwarding msg to session actors {}", msg);
-        sessionActors.keySet().forEach(address -> {
-            ClusterAPIProtos.ClusterMessage msgWithServerAddress = msg.getMsg()
-                    .toBuilder()
-                    .setServerAddress(ClusterAPIProtos.ServerAddress
-                            .newBuilder()
-                            .setHost(address.getHost())
-                            .setPort(address.getPort())
-                            .build())
-                    .build();
-            onMsg(msgWithServerAddress);
-        });
-        pendingMsgs.values().forEach(queue -> queue.add(msg.getMsg()));
     }
 
     private void onMsg(ClusterAPIProtos.ClusterMessage msg) {
@@ -90,7 +79,7 @@ public class RpcManagerActor extends ContextAwareActor {
             if (session != null) {
                 log.debug("{} Forwarding msg to session actor: {}", address, msg);
                 session.getActor().tell(msg, ActorRef.noSender());
-            } else {
+            } else {//会话不存在，暂存在队列中
                 log.debug("{} Storing msg to pending queue: {}", address, msg);
                 Queue<ClusterAPIProtos.ClusterMessage> queue = pendingMsgs.get(address);
                 if (queue == null) {
@@ -109,17 +98,6 @@ public class RpcManagerActor extends ContextAwareActor {
     public void postStop() {
         sessionActors.clear();
         pendingMsgs.clear();
-    }
-
-    private void onClusterEvent(ClusterEventMsg msg) {
-        ServerAddress server = msg.getServerAddress();
-        if (server.compareTo(instance) > 0) {
-            if (msg.isAdded()) {
-                onCreateSessionRequest(new RpcSessionCreateRequestMsg(UUID.randomUUID(), server, null));
-            } else {
-                onSessionClose(false, server);
-            }
-        }
     }
 
     private void onSessionConnected(RpcSessionConnectedMsg msg) {
@@ -145,6 +123,11 @@ public class RpcManagerActor extends ContextAwareActor {
         return false;
     }
 
+    /**
+     * 从sessionMap里面移除session
+     * @param reconnect
+     * @param remoteAddress
+     */
     private void onSessionClose(boolean reconnect, ServerAddress remoteAddress) {
         log.info("[{}] session closed. Should reconnect: {}", remoteAddress, reconnect);
         SessionActorInfo sessionRef = sessionActors.get(remoteAddress);
@@ -158,6 +141,12 @@ public class RpcManagerActor extends ContextAwareActor {
         }
     }
 
+
+    /**
+     * 发送Session创建请求，一个remoteAddress，一个sessionId对应一个SessionActor
+     * 只是创建Session，还没有真正建立连接
+     * @param msg
+     */
     private void onCreateSessionRequest(RpcSessionCreateRequestMsg msg) {
         if (msg.getRemoteAddress() != null) {
             if (!sessionActors.containsKey(msg.getRemoteAddress())) {
@@ -169,18 +158,31 @@ public class RpcManagerActor extends ContextAwareActor {
         }
     }
 
+
+    /**
+     * session放进map里，一个sessionId对应一个sessionActor
+     * @param remoteAddress
+     * @param uuid
+     * @param sender
+     */
     private void register(ServerAddress remoteAddress, UUID uuid, ActorRef sender) {
         sessionActors.put(remoteAddress, new SessionActorInfo(uuid, sender));
         log.info("[{}][{}] Registering session actor.", remoteAddress, uuid);
         Queue<ClusterAPIProtos.ClusterMessage> data = pendingMsgs.remove(remoteAddress);
         if (data != null) {
             log.info("[{}][{}] Forwarding {} pending messages.", remoteAddress, uuid, data.size());
-            data.forEach(msg -> sender.tell(new RpcSessionTellMsg(msg), ActorRef.noSender()));
+            data.forEach(msg -> sender.tell(msg, ActorRef.noSender()));
         } else {
             log.info("[{}][{}] No pending messages to forward.", remoteAddress, uuid);
         }
     }
 
+
+    /**
+     * 初始化RPCSessionActor
+     * @param msg
+     * @return
+     */
     private ActorRef createSessionActor(RpcSessionCreateRequestMsg msg) {
         log.info("[{}] Creating session actor.", msg.getMsgUid());
         ActorRef actor = context().actorOf(

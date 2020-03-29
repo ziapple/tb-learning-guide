@@ -23,6 +23,7 @@ import com.ziapple.server.cluster.DiscoveryService;
 import com.ziapple.server.cluster.ServerAddress;
 import com.ziapple.server.cluster.rpc.ClusterRpcService;
 import com.ziapple.server.cluster.rpc.RpcBroadcastMsg;
+import com.ziapple.server.cluster.rpc.RpcManagerActor;
 import com.ziapple.server.cluster.rpc.RpcSessionCreateRequestMsg;
 import com.ziapple.server.gen.cluster.ClusterAPIProtos;
 import lombok.extern.slf4j.Slf4j;
@@ -90,9 +91,9 @@ public class DefaultActorService implements ActorService {
         actorContext.setActorSystem(system);
         appActor = system.actorOf(Props.create(new AppActor.ActorCreator(actorContext)).withDispatcher(APP_DISPATCHER_NAME), "appActor");
         actorContext.setAppActor(appActor);
+        // 初始化RPC服务器
         rpcService.init(this);
-        //rpcManagerActor = system.actorOf(Props.create(new RpcManagerActor.ActorCreator(actorContext)).withDispatcher(CORE_DISPATCHER_NAME),
-                //"rpcManagerActor");
+        rpcManagerActor = system.actorOf(Props.create(new RpcManagerActor.ActorCreator(actorContext)).withDispatcher(CORE_DISPATCHER_NAME), "rpcManagerActor");
         log.info("Actor system initialized.");
     }
 
@@ -130,6 +131,7 @@ public class DefaultActorService implements ActorService {
             receivedClusterMsgs.incrementAndGet();
         }
         ServerAddress serverAddress = new ServerAddress(source.getHost(), source.getPort(), source.getServerType());
+        log.info("接受到消息{},{}", serverAddress, msg);
     }
 
     @Override
@@ -137,16 +139,19 @@ public class DefaultActorService implements ActorService {
         if (statsEnabled) {
             sentClusterMsgs.incrementAndGet();
         }
-        //rpcManagerActor.tell(msg, ActorRef.noSender());
+        rpcManagerActor.tell(msg, ActorRef.noSender());
     }
 
     @Override
     public void onRpcSessionCreateRequestMsg(RpcSessionCreateRequestMsg msg) {
-
+        if (statsEnabled) {
+            sentClusterMsgs.incrementAndGet();
+        }
+        rpcManagerActor.tell(msg, ActorRef.noSender());
     }
 
     @Override
     public void onBroadcastMsg(RpcBroadcastMsg msg) {
-
+        rpcManagerActor.tell(msg, ActorRef.noSender());
     }
 }

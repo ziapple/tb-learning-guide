@@ -1,6 +1,5 @@
-package com.ziapple.demo.server;
+package com.ziapple.rpc.server;
 
-import com.ziapple.server.gen.cluster.ClusterAPIProtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,18 +14,15 @@ public class MqttDeviceTest {
     private static int MSG_NUM = 0;
     private static Logger logger = LoggerFactory.getLogger(MqttDeviceTest.class);
     private RoutingServer routingServer;
+    private DiscoveryService discoveryService;
     private MqttServer mqttServer;
 
     public void init(){
-        this.routingServer = new RoutingServerImpl();
+        this.discoveryService = new DummyDiscoveryService();
+        discoveryService.init();
+        this.routingServer = new RoutingServerImpl(discoveryService);
         // 启动RPCServer集群，模拟两台RPC服务器
-        RpcService gRpcService1 = new GRpcService();
-        gRpcService1.start(8080);
-        routingServer.regist(new ClusterAPIProtos.ServerAddress().newBuilder().setHost("localhost").setPort(8080).build());
-        RpcService gRpcService2 = new GRpcService();
-        gRpcService2.start(8081);
-        routingServer.regist(new ClusterAPIProtos.ServerAddress().newBuilder().setHost("127.0.0.1").setPort(8081).build());
-
+        RpcService gRpcService1 = new GRpcService(routingServer.getCurrentServer());
         this.mqttServer = new MqttServerImpl(routingServer);
     }
 

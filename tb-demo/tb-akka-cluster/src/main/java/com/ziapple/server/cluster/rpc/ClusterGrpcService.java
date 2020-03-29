@@ -112,6 +112,26 @@ public class ClusterGrpcService extends ClusterRpcServiceGrpc.ClusterRpcServiceI
         return createSession(new RpcSessionCreateRequestMsg(UUID.randomUUID(), null, responseObserver));
     }
 
+    /**
+     * 创建服务端Session，交给{@code GrpcSessionLister}来创建
+     * 注意客户端的Session，是通过{@code RpcManagerActor}来创建的
+     * 服务端的Session和客户端的Session不是一个Id，都是随机的
+     * @param msg  消息体
+     * @return
+     */
+    private StreamObserver<ClusterAPIProtos.ClusterMessage> createSession(RpcSessionCreateRequestMsg msg) {
+        BlockingQueue<StreamObserver<ClusterAPIProtos.ClusterMessage>> queue = new ArrayBlockingQueue<>(1);
+        pendingSessionMap.put(msg.getMsgUid(), queue);
+        listener.onRpcSessionCreateRequestMsg(msg);
+        try {
+            StreamObserver<ClusterAPIProtos.ClusterMessage> observer = queue.take();
+            log.info("Processed new session.");
+            return observer;
+        } catch (Exception e) {
+            log.info("Failed to process session.", e);
+            throw new RuntimeException(e);
+        }
+    }
 
     @PreDestroy
     public void stop() {
@@ -132,25 +152,6 @@ public class ClusterGrpcService extends ClusterRpcServiceGrpc.ClusterRpcServiceI
     @Override
     public void broadcast(RpcBroadcastMsg msg) {
         listener.onBroadcastMsg(msg);
-    }
-
-    /**
-     * 接受消息
-     * @param msg  消息体
-     * @return
-     */
-    private StreamObserver<ClusterAPIProtos.ClusterMessage> createSession(RpcSessionCreateRequestMsg msg) {
-        BlockingQueue<StreamObserver<ClusterAPIProtos.ClusterMessage>> queue = new ArrayBlockingQueue<>(1);
-        pendingSessionMap.put(msg.getMsgUid(), queue);
-        listener.onRpcSessionCreateRequestMsg(msg);
-        try {
-            StreamObserver<ClusterAPIProtos.ClusterMessage> observer = queue.take();
-            log.info("Processed new session.");
-            return observer;
-        } catch (Exception e) {
-            log.info("Failed to process session.", e);
-            throw new RuntimeException(e);
-        }
     }
 
     /**

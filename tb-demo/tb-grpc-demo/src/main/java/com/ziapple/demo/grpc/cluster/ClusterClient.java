@@ -49,15 +49,10 @@ public class ClusterClient {
         //判断调用状态。在内部类中被访问，需要加final修饰
         final CountDownLatch countDownLatch = new CountDownLatch(1);
 
-<<<<<<< HEAD:tb-demo/tb-grpc-demo/src/main/java/com/ziapple/demo/grpc/CashClient1.java
-        StreamObserver<CashProto.CashReply> responseObserver = new StreamObserver<CashProto.CashReply>() {
-            private int cnt = 0;
-            public void onNext(CashProto.CashReply result) {
-=======
+
         StreamObserver<ClusterProto.MsgResponse> responseObserver = new StreamObserver<ClusterProto.MsgResponse>() {
             private int cnt = 0;
             public void onNext(ClusterProto.MsgResponse response) {
->>>>>>> 2b77655eaf16b86e3f81fca854b63646ef98c12d:tb-demo/tb-grpc-demo/src/main/java/com/ziapple/demo/grpc/cluster/ClusterClient.java
                 //此处直接打印结果，其他也可用回调进行复杂处理
                 log.info("第" + (++cnt) + "次调用得到结果为:" + response.getStatus());
             }
@@ -83,19 +78,10 @@ public class ClusterClient {
             }
         };
 
-<<<<<<< HEAD:tb-demo/tb-grpc-demo/src/main/java/com/ziapple/demo/grpc/CashClient1.java
-        StreamObserver<CashProto.CashRequest> requestObserver = cashServiceStub.dealCash(responseObserver);
-
-        for(int num: nums){
-            CashProto.CashRequest value = CashProto.CashRequest.newBuilder().setUser("ziapple").setMoney(num).build();
-            requestObserver.onNext(value);
-
-=======
         StreamObserver<ClusterProto.MsgRequest> requestObserver = clusterServiceStub.handleMsg(responseObserver);
         for(int num: nums){
             ClusterProto.MsgRequest request = ClusterProto.MsgRequest.newBuilder().setMsgType("msg").setPayload(String.valueOf(num)).build();
             requestObserver.onNext(request);
->>>>>>> 2b77655eaf16b86e3f81fca854b63646ef98c12d:tb-demo/tb-grpc-demo/src/main/java/com/ziapple/demo/grpc/cluster/ClusterClient.java
             //判断调用结束状态。如果整个调用已经结束，继续发送数据不会报错，但是会被舍弃
             if(countDownLatch.getCount() == 0){
                 return;

@@ -1,23 +1,31 @@
-package com.ziapple.demo.server;
+package com.ziapple.rpc.server;
 
 import com.ziapple.server.gen.cluster.ClusterAPIProtos;
 import com.ziapple.server.gen.cluster.ClusterRpcServiceGrpc;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.stub.StreamObserver;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * RPC集群服务，用于接受和发送RPC消息
  */
+@Slf4j
 public class GRpcService extends ClusterRpcServiceGrpc.ClusterRpcServiceImplBase implements RpcService{
     // RPC的Server对象
     private Server server;
+    private ServerInstance currentServer;
     // RPC通讯会话Map
-    private Map<ClusterAPIProtos.ServerAddress, RpcSession> rpcSessions = new ConcurrentHashMap<>();
+    private Map<ServerAddress, RpcSession> rpcSessions = new ConcurrentHashMap<>();
+
+    public GRpcService(ServerInstance serverInstance){
+        this.currentServer = serverInstance;
+    }
 
     /**
      * 服务器端接受消息
@@ -51,12 +59,11 @@ public class GRpcService extends ClusterRpcServiceGrpc.ClusterRpcServiceImplBase
 
     /**
      * 启动本地群服务
-     * @param port
      */
     @Override
-    public void start(int port) {
-        server = ServerBuilder.forPort(port).addService(this).build();
-        System.out.println("启动本地服务:" + port);
+    public void start() {
+        server = ServerBuilder.forPort(this.currentServer.getPort()).addService(this).build();
+        log.info("启动本地服务:{}", this.currentServer.getPort());
         try {
             server.start();
         } catch (IOException e) {
@@ -70,17 +77,17 @@ public class GRpcService extends ClusterRpcServiceGrpc.ClusterRpcServiceImplBase
      * @param clusterMessage
      */
     @Override
-    public void onSendMsg(ClusterAPIProtos.ServerAddress serverAddress, ClusterAPIProtos.ClusterMessage clusterMessage) {
+    public void onSendMsg(ServerAddress serverAddress, ClusterAPIProtos.ClusterMessage clusterMessage) {
         // 判断与服务器是否建立Session会话，没有则创建
         checkSession(serverAddress);
         RpcSession rpcSession = rpcSessions.get(serverAddress);
         rpcSession.tell(clusterMessage);
     }
 
-    public void checkSession(ClusterAPIProtos.ServerAddress serverAddress){
+    public void checkSession(ServerAddress serverAddress){
         RpcSession rpcSession = rpcSessions.get(serverAddress);
         if(rpcSession == null){
-            rpcSession = new RpcSessionImpl(serverAddress);
+            rpcSession = new RpcSessionImpl(UUID.randomUUID(), serverAddress);
             rpcSession.initSession();
             rpcSessions.put(serverAddress, rpcSession);
         }else{

@@ -1,4 +1,4 @@
-package com.ziapple.demo.server;
+package com.ziapple.rpc.server;
 
 import com.ziapple.server.gen.cluster.ClusterAPIProtos;
 

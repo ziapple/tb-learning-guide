@@ -1,21 +1,23 @@
-package com.ziapple.demo.server;
+package com.ziapple.rpc.server;
 
 import com.ziapple.server.gen.cluster.ClusterAPIProtos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 /**
  * 模拟MqttServer发送给Cluster集群消息
  */
 public class MqttServerImpl implements MqttServer{
     private Logger logger = LoggerFactory.getLogger(MqttServerImpl.class);
-
+    private DiscoveryService discoveryService;
     private RoutingServer routingServer;
     private RpcService rpcService;
 
     public MqttServerImpl(RoutingServer routingServer){
         this.routingServer = routingServer;
-        this.rpcService = new GRpcService();
+        this.rpcService = new GRpcService(routingServer.getCurrentServer());
     }
 
     /**
@@ -23,15 +25,15 @@ public class MqttServerImpl implements MqttServer{
      * @param mqttMsg
      */
     public void process(int entityId, String mqttMsg){
-        ClusterAPIProtos.ServerAddress serverAddress = routingServer.getRPCServer(entityId);
+        Optional<ServerAddress> serverAddress = routingServer.resolveById(entityId);
         ClusterAPIProtos.ClusterMessage clusterMsg = ClusterAPIProtos.ClusterMessage.newBuilder()
                 .setMessageType(ClusterAPIProtos.MessageType.CLUSTER_TRANSFER_MESSAGE)
                 .setPayload(mqttMsg).build();
-        if(serverAddress.getHost().equals("localhost")){//交给本地处理
-            logger.info("本地Service调用");
-        }else{// 远程RPC调用
+        if(serverAddress.isPresent()) {
             logger.info("远程Service调用");
-            rpcService.onSendMsg(serverAddress, clusterMsg);
+            rpcService.onSendMsg(serverAddress.get(), clusterMsg);
+        }else{
+            logger.info("本地Service调用");
         }
     }
 }

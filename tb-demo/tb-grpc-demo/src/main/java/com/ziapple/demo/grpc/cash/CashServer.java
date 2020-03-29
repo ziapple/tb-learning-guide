@@ -1,7 +1,6 @@
 package com.ziapple.demo.grpc.cash;
 
-import com.ziapple.demo.grpc.CashReply;
-import com.ziapple.demo.grpc.CashRequest;
+import com.ziapple.demo.grpc.CashProto;
 import com.ziapple.demo.grpc.CashServiceGrpc;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;

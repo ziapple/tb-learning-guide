@@ -3,6 +3,10 @@ package com.ziapple.test;
 import com.ziapple.server.data.id.DeviceId;
 import com.ziapple.server.transport.LocalTransportService;
 import com.ziapple.server.util.SpringApplicationHolder;
+import lombok.extern.slf4j.Slf4j;
+import org.omg.CosNaming.BindingIterator;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
@@ -12,6 +16,7 @@ import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
+@Slf4j
 public class AkkaClusterServerTest {
     private LocalTransportService transportService;
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
@@ -45,7 +50,8 @@ public class AkkaClusterServerTest {
             @Override
             public void run() {
                 Random random = new Random();
-                String msg = "发送消息:" + random.nextInt();
+                String msg = "消息:" + random.nextInt();
+                log.info("发送消息{}", msg);
                 DeviceId deviceId = new DeviceId(UUID.randomUUID());
                 transportService.doProcess(deviceId, msg);
             }

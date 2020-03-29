@@ -13,23 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.server.cluster.rpc;
-
-import com.ziapple.server.cluster.ServerAddress;
-import com.ziapple.server.gen.cluster.ClusterAPIProtos;
-import io.grpc.stub.StreamObserver;
-import lombok.Data;
-
-import java.util.UUID;
+package com.ziapple.rpc.server;
 
 /**
+ * 获取ServerInstance实例的服务
  * @author Andrew Shvayka
  */
-@Data
-public final class RpcSessionCreateRequestMsg {
+public interface ServerInstanceService {
 
-    private final UUID msgUid;
-    private final ServerAddress remoteAddress;
-    private final StreamObserver<ClusterAPIProtos.ClusterMessage> responseObserver;
-
+    ServerInstance getSelf();
 }

@@ -1,4 +1,4 @@
-package com.ziapple.demo.server;
+package com.ziapple.rpc.server;
 
 /**
  * 模拟MqttServer发送给Cluster集群消息
