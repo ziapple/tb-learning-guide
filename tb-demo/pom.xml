@@ -10,11 +10,10 @@
     <modelVersion>4.0.0</modelVersion>
     <name>Thingsboard Learning Demo</name>
     <modules>
-        <module>tb-akka-demo</module>
-        <module>tb-netty-demo</module>
-        <module>tb-grpc-demo</module>
-        <module>tb-akka-cluster</module>
-        <module>tb-akka-rpc</module>
+        <module>demo-akka</module>
+        <module>demo-netty</module>
+        <module>demo-rpc</module>
+        <module>demo-rpc-cluster</module>
     </modules>
     <artifactId>tb-demo</artifactId>
     <packaging>pom</packaging>
