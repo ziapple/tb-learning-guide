@@ -37,7 +37,6 @@ public class CurrentServerInstanceService implements ServerInstanceService {
 
     public void init() {
         self = new ServerInstance(new ServerAddress(rpcHost, rpcPort));
-        log.info("Current server instance: [{};{}]", self.getHost(), self.getPort());
     }
 
     @Override

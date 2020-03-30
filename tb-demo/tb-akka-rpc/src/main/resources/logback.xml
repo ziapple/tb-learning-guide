@@ -25,7 +25,8 @@
         </encoder>
     </appender>
 
-    <logger name="com.ziapple.rpc" level="INFO" />
+    <logger name="com.ziapple.rpc" level="DEBUG" />
+    <logger name="com.ziapple.test" level="DEBUG" />
     <logger name="akka" level="INFO" />
 
     <root level="INFO">

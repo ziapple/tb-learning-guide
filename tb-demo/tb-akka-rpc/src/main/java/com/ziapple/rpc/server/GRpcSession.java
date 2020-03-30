@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * RPC服务器会话
  */
-public class RpcSessionImpl implements RpcSession{
+public class GRpcSession implements RpcSession{
     private boolean isSessionOpen = false;
     private ServerAddress serverAddress;
     private ClusterRpcServiceGrpc.ClusterRpcServiceStub clusterRpcServiceStub;
@@ -20,7 +20,7 @@ public class RpcSessionImpl implements RpcSession{
     private StreamObserver<ClusterAPIProtos.ClusterMessage> responseObserver;
     private UUID sessionId;
 
-    RpcSessionImpl(UUID sessionId, ServerAddress serverAddress){
+    GRpcSession(UUID sessionId, ServerAddress serverAddress){
         this.serverAddress = serverAddress;
         this.sessionId = sessionId;
     }

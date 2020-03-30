@@ -3,14 +3,12 @@ package com.ziapple.rpc.server;
 import com.ziapple.server.gen.cluster.ClusterAPIProtos;
 
 public interface RpcService {
-    /**
-     * 启动本地RPC服务
-     */
-    void start();
+    // 初始化服务
+    void init();
 
-    /**
-     * 发送集群消息
-     * @param clusterMessage
-     */
-    void onSendMsg(ServerAddress serverAddress, ClusterAPIProtos.ClusterMessage clusterMessage);
+    // 发送集群消息
+    void onSendMsg(ClusterAPIProtos.ClusterMessage msg);
+
+    // 接收消息
+    void onReceiveMsg(ClusterAPIProtos.ClusterMessage msg);
 }

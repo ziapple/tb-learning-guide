@@ -47,8 +47,10 @@ message MessageMataInfo {
 
 // 消息类型
 enum MessageType {
-  // 模拟查账
-  CLUSTER_GET_MESSAGE = 0;
-  // 模拟转账
+  // 集群初始化
+  CLUSTER_INIT_MESSAGE = 0;
+  // 集群主消息
   CLUSTER_TRANSFER_MESSAGE = 1;
+  // Session请求
+  CLUSTER_SESSION_REQUEST = 2;
 }

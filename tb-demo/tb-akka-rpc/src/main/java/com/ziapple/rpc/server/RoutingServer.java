@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface RoutingServer {
     ServerInstance getCurrentServer();
 
-    Optional<ServerAddress> resolveById(Integer entityId);
+    Optional<ServerAddress> resolveById(Integer entityId, int len);
 }

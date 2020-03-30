@@ -9,11 +9,11 @@ import java.util.Optional;
  * Cluster路由服务
  */
 @Slf4j
-public class RoutingServerImpl implements RoutingServer{
+public class DummyRoutingServer implements RoutingServer{
     private DiscoveryService discoveryService;
     private ServerInstance currentServer;
 
-    public RoutingServerImpl(DiscoveryService discoveryService){
+    public DummyRoutingServer(DiscoveryService discoveryService){
         this.discoveryService = discoveryService;
         this.currentServer = discoveryService.getCurrentServer();
     }
@@ -24,9 +24,9 @@ public class RoutingServerImpl implements RoutingServer{
     }
 
     @Override
-    public Optional<ServerAddress> resolveById(Integer entityId) {
+    public Optional<ServerAddress> resolveById(Integer entityId, int len) {
         List<ServerInstance> otherServers = discoveryService.getOtherServers();
-        ServerInstance result = otherServers.get(entityId % 2);
+        ServerInstance result = otherServers.get(entityId % len);
         if (!currentServer.equals(result)) {
             return Optional.of(result.getServerAddress());
         } else {
