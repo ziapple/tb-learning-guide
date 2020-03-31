@@ -15,20 +15,20 @@
  */
 package com.ziapple.dao.sql;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
+import lombok.Getter;
 
-import java.util.List;
-import java.util.function.Consumer;
+public final class TbSqlQueueElement<E> {
+    // 设置线程执行时间
+    @Getter
+    private final SettableFuture<Void> future;
+    @Getter
+    private final E entity;
 
-/**
- * 写入数据库队列
- * @param <E>
- */
-public interface TbSqlQueue<E> {
-
-    void init(ScheduledLogExecutorComponent logExecutor, Consumer<List<E>> saveFunction);
-
-    void destroy();
-
-    ListenableFuture<Void> add(E element);
+    public TbSqlQueueElement(SettableFuture<Void> future, E entity) {
+        this.future = future;
+        this.entity = entity;
+    }
 }
+
+

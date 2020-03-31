@@ -25,7 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 定时任务器
+ * 定时任务器，定时打印Sql执行日志
  */
 @Component
 public class ScheduledLogExecutorComponent {

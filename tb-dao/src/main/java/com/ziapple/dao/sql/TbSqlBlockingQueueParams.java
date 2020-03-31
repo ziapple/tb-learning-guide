@@ -15,20 +15,17 @@
  */
 package com.ziapple.dao.sql;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import lombok.Builder;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.function.Consumer;
+@Slf4j
+@Data
+@Builder
+public class TbSqlBlockingQueueParams {
 
-/**
- * 写入数据库队列
- * @param <E>
- */
-public interface TbSqlQueue<E> {
-
-    void init(ScheduledLogExecutorComponent logExecutor, Consumer<List<E>> saveFunction);
-
-    void destroy();
-
-    ListenableFuture<Void> add(E element);
+    private final String logName;
+    private final int batchSize;
+    private final long maxDelay;
+    private final long statsPrintIntervalMs;
 }

@@ -19,7 +19,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Copy of Executors.DefaultThreadFactory but with ability to set name of the pool
+ * 线程工厂：给线程命名，分组，设置优先级
  */
 public class ThingsBoardThreadFactory implements ThreadFactory {
     private static final AtomicInteger poolNumber = new AtomicInteger(1);

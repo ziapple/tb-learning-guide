@@ -15,7 +15,7 @@
  */
 package com.ziapple.server.cluster;
 
-import com.ziapple.server.util.ThingsBoardThreadFactory;
+import com.ziapple.common.util.ThingsBoardThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
