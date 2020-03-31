@@ -1,13 +1,10 @@
 package com.ziapple.test;
 
+import com.ziapple.common.data.id.DeviceId;
 import com.ziapple.server.cluster.DummyDiscoveryService;
-import com.ziapple.server.data.id.DeviceId;
 import com.ziapple.server.transport.LocalTransportService;
 import com.ziapple.server.util.SpringApplicationHolder;
 import lombok.extern.slf4j.Slf4j;
-import org.omg.CosNaming.BindingIterator;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 

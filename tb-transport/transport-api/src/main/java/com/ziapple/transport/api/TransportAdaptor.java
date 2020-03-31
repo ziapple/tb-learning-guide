@@ -1,6 +1,6 @@
 package com.ziapple.transport.api;
 
-import com.ziapple.server.session.SessionContext;
+import com.ziapple.transport.api.session.SessionContext;
 
 /**
  * Copyright © 2016-2020 The Thingsboard Authors

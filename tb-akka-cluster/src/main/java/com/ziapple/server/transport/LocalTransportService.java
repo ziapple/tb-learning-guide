@@ -1,13 +1,13 @@
 package com.ziapple.server.transport;
 
 import akka.actor.ActorRef;
+import com.ziapple.common.data.id.DeviceId;
 import com.ziapple.server.cluster.ClusterRoutingService;
 import com.ziapple.server.cluster.ServerAddress;
 import com.ziapple.server.cluster.actor.ActorSystemContext;
 import com.ziapple.server.cluster.msg.TransportToDeviceActorMsg;
 import com.ziapple.server.cluster.rpc.ClusterRpcService;
 import com.ziapple.server.cluster.rpc.DataDecodingEncodingService;
-import com.ziapple.server.data.id.DeviceId;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

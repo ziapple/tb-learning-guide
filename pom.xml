@@ -13,7 +13,7 @@
         <module>tb-transport</module>
         <module>tb-akka-cluster</module>
         <module>tb-kafka</module>
-        <module>tb-data</module>
+        <module>tb-dao</module>
         <module>tb-common</module>
         <module>tb-application</module>
         <module>tb-demo</module>
@@ -81,17 +81,22 @@
             </dependency>
             <dependency>
                 <groupId>com.ziapple</groupId>
-                <artifactId>tb-data</artifactId>
+                <artifactId>tb-dao</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.ziapple</groupId>
-                <artifactId>tb-msg</artifactId>
+                <artifactId>tb-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.ziapple</groupId>
                 <artifactId>tb-kafka</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ziapple</groupId>
+                <artifactId>tb-akka-cluster</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

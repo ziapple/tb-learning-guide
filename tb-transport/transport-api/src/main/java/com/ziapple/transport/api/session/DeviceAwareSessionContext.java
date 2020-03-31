@@ -15,7 +15,6 @@
  */
 package com.ziapple.transport.api.session;
 
-import com.ziapple.server.session.SessionContext;
 import com.ziapple.transport.TransportProtos.DeviceInfoProto;
 import lombok.Data;
 import lombok.Getter;

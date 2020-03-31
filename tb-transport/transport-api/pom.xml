@@ -13,19 +13,6 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>com.ziapple</groupId>
-            <artifactId>tb-kafka</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.ziapple</groupId>
-            <artifactId>tb-data</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.ziapple</groupId>
-            <artifactId>tb-msg</artifactId>
-        </dependency>
-
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

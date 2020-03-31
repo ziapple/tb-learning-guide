@@ -1,11 +1,14 @@
 package com.ziapple.test.cluster;
 
 import com.ziapple.rpc.server.*;
+import com.ziapple.server.cluster.DummyDiscoveryService;
+import com.ziapple.server.cluster.GRpcService;
+import com.ziapple.server.cluster.RpcService;
+import com.ziapple.server.cluster.ServerAddress;
 import com.ziapple.server.gen.cluster.ClusterAPIProtos;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;

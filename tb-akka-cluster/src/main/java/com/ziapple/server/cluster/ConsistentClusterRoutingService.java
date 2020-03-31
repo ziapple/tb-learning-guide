@@ -17,7 +17,7 @@ package com.ziapple.server.cluster;
 
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
-import com.ziapple.server.data.id.EntityId;
+import com.ziapple.common.data.id.EntityId;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

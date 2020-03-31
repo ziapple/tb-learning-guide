@@ -16,9 +16,9 @@
 package com.ziapple.server.cluster.actor.process;
 
 import akka.actor.ActorContext;
+import com.ziapple.common.data.id.DeviceId;
 import com.ziapple.server.cluster.actor.ActorSystemContext;
 import com.ziapple.server.cluster.msg.TransportToDeviceActorMsg;
-import com.ziapple.server.data.id.DeviceId;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

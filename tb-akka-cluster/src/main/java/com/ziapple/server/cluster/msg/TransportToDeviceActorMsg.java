@@ -15,7 +15,7 @@
  */
 package com.ziapple.server.cluster.msg;
 
-import com.ziapple.server.data.id.EntityId;
+import com.ziapple.common.data.id.EntityId;
 import lombok.Data;
 
 @Data

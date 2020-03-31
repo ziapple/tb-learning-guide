@@ -15,8 +15,8 @@
  */
 package com.ziapple.transport.api.service;
 
+import com.ziapple.common.util.ThingsBoardThreadFactory;
 import com.ziapple.server.kafka.*;
-import com.ziapple.server.util.ThingsBoardThreadFactory;
 import com.ziapple.transport.TransportProtos.*;
 import com.ziapple.transport.api.TransportServiceCallback;
 import lombok.extern.slf4j.Slf4j;

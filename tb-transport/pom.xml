@@ -18,5 +18,14 @@
     <artifactId>tb-transport</artifactId>
     <description>后端服务模块</description>
 
-    <!-- dependency放在具体module里面写，此处不写 -->
+    <dependencies>
+        <dependency>
+            <groupId>com.ziapple</groupId>
+            <artifactId>tb-kafka</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ziapple</groupId>
+            <artifactId>tb-common</artifactId>
+        </dependency>
+    </dependencies>
 </project>

@@ -15,10 +15,10 @@
  */
 package com.ziapple.transport.api.service;
 
-import com.ziapple.server.data.EntityType;
-import com.ziapple.server.tools.TbRateLimits;
-import com.ziapple.server.tools.TbRateLimitsException;
-import com.ziapple.server.util.ThingsBoardThreadFactory;
+import com.ziapple.common.concurrent.TbRateLimits;
+import com.ziapple.common.concurrent.TbRateLimitsException;
+import com.ziapple.common.data.EntityType;
+import com.ziapple.common.util.ThingsBoardThreadFactory;
 import com.ziapple.transport.TransportProtos;
 import com.ziapple.transport.api.SessionMsgListener;
 import com.ziapple.transport.api.TransportService;

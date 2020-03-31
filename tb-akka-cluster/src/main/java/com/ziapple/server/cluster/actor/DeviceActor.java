@@ -18,10 +18,10 @@ package com.ziapple.server.cluster.actor;
 import akka.actor.ActorRef;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.ziapple.common.data.id.DeviceId;
 import com.ziapple.server.cluster.actor.process.DeviceActorMessageProcessor;
 import com.ziapple.server.cluster.msg.TbActorMsg;
 import com.ziapple.server.cluster.msg.TransportToDeviceActorMsg;
-import com.ziapple.server.data.id.DeviceId;
 
 /**
  * thingsboard主Actor，接收设备端发来的消息

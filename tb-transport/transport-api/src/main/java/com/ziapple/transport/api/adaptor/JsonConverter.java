@@ -16,9 +16,9 @@
 package com.ziapple.transport.api.adaptor;
 
 import com.google.gson.*;
-import com.ziapple.server.data.DataConstants;
-import com.ziapple.server.data.kv.*;
-import com.ziapple.server.kv.AttributesKVMsg;
+import com.ziapple.common.data.DataConstants;
+import com.ziapple.common.data.kv.*;
+import com.ziapple.common.kv.AttributesKVMsg;
 import com.ziapple.transport.TransportProtos;
 import com.ziapple.transport.TransportProtos.*;
 import org.apache.commons.lang3.math.NumberUtils;

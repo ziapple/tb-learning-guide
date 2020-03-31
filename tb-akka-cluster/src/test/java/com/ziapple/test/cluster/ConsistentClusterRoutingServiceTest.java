@@ -1,10 +1,10 @@
 package com.ziapple.test.cluster;
 
+import com.ziapple.common.data.EntityType;
+import com.ziapple.common.data.id.EntityIdFactory;
+import com.ziapple.common.data.id.TenantId;
 import com.ziapple.server.cluster.ConsistentClusterRoutingService;
 import com.ziapple.server.cluster.ServerAddress;
-import com.ziapple.server.data.EntityType;
-import com.ziapple.server.data.id.EntityIdFactory;
-import com.ziapple.server.data.id.TenantId;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,13 +44,13 @@ public class ConsistentClusterRoutingServiceTest {
             devices.add(UUID.randomUUID());
         }
         UUID fixedUUID = UUID.randomUUID();
-        devices.forEach((uuid) -> {
-            // 测试固定性
-            TenantId tenantId = (TenantId)EntityIdFactory.getByTypeAndUuid(EntityType.DEVICE, uuid);
+        for (UUID uuid : devices) {// 测试固定性
+            TenantId tenantId = (TenantId) EntityIdFactory.getByTypeAndUuid(EntityType.DEVICE, uuid);
             Optional<ServerAddress> serverAddress = consistentClusterRoutingService.resolveById(tenantId);
-            if(serverAddress.isPresent()){
+            if (serverAddress.isPresent()) {
                 System.out.println(uuid + "->" + serverAddress.get().toString());
             }
             System.out.println(fixedUUID + "->" + consistentClusterRoutingService.resolveById(tenantId));
-        }); }
+        }
+    }
 }

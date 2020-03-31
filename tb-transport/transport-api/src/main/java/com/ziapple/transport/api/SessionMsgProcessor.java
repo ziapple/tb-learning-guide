@@ -14,7 +14,7 @@ package com.ziapple.transport.api; /**
  * limitations under the License.
  */
 
-import com.ziapple.server.data.Device;
+import com.ziapple.common.data.Device;
 
 public interface SessionMsgProcessor {
 

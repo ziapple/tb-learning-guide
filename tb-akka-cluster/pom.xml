@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>com.ziapple</groupId>
-            <artifactId>tb-data</artifactId>
+            <artifactId>tb-common</artifactId>
         </dependency>
 
         <!-- akka -->
@@ -136,6 +136,14 @@
                     <artifactId>jackson-core</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.ziapple</groupId>
+            <artifactId>tb-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ziapple</groupId>
+            <artifactId>tb-common</artifactId>
         </dependency>
 
     </dependencies>
