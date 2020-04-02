@@ -23,9 +23,15 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 @Builder
 public class TbSqlBlockingQueueParams {
-
     private final String logName;
     private final int batchSize;
     private final long maxDelay;
     private final long statsPrintIntervalMs;
+
+    public TbSqlBlockingQueueParams(String logName, int batchSize, long maxDelay, long statsPrintIntervalMs) {
+        this.logName = logName;
+        this.batchSize = batchSize;
+        this.maxDelay = maxDelay;
+        this.statsPrintIntervalMs = statsPrintIntervalMs;
+    }
 }

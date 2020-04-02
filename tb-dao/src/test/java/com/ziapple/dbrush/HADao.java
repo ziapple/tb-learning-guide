@@ -1,4 +1,4 @@
-package com.ziapple.data;
+package com.ziapple.dbrush;
 
 import com.ziapple.common.concurrent.TbRateLimits;
 import lombok.extern.slf4j.Slf4j;
