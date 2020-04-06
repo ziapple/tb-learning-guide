@@ -65,7 +65,7 @@ public class TbSqlBlockingQueue<E> implements TbSqlQueue<E> {
             while (!Thread.interrupted()) {
                 try {
                     long currentTs = System.currentTimeMillis();
-                    // 获取队列元素，队列为空时返回null
+                    // 获取队列元素，mqxDelay时间内没有队列数据返回null
                     TbSqlQueueElement<E> attr = queue.poll(maxDelay, TimeUnit.MILLISECONDS);
                     if (attr == null) {
                         continue;
@@ -78,7 +78,7 @@ public class TbSqlBlockingQueue<E> implements TbSqlQueue<E> {
                     log.debug("[{}] Going to save {} entities", logName, entities.size());
                     // 保存实体类（时序数据），把List<Entity>作为参数传过去批处理保存，保存方法在{@code JpaTimeserisDao}中实现
                     saveFunction.accept(entities.stream().map(TbSqlQueueElement::getEntity).collect(Collectors.toList()));
-                    // 设置entities的Future返回值为null
+                    // 设置entities的Future返回值为null，表示执行成功
                     entities.forEach(v -> v.getFuture().set(null));
                     // 记录保存成功的实体数量
                     savedCount.addAndGet(entities.size());
@@ -89,14 +89,14 @@ public class TbSqlBlockingQueue<E> implements TbSqlQueue<E> {
                             Thread.sleep(remainingDelay);
                         }
                     }
-                } catch (Exception e) {
+                } catch (Exception e) {// 执行异常，整个批处理回滚
                     failedCount.addAndGet(entities.size());
-                    // 设置entity执行失败的异常
+                    // 设置每个entity执行异常,settableFuture抛出异常
                     entities.forEach(entityFutureWrapper -> entityFutureWrapper.getFuture().setException(e));
-                    if (e instanceof InterruptedException) {
+                    if (e instanceof InterruptedException) {// 中断异常，直接退出while循环
                         log.info("[{}] Queue polling was interrupted", logName);
                         break;
-                    } else {
+                    } else {// 其他异常，while循环继续
                         log.error("[{}] Failed to save {} entities", logName, entities.size(), e);
                     }
                 } finally {
@@ -105,7 +105,7 @@ public class TbSqlBlockingQueue<E> implements TbSqlQueue<E> {
             }
         });
 
-        // 定期清楚计数器，防止溢出
+        // 定期清楚计数器，防止溢出，注意观察queueSize不要出现持续增加的情况，如果持续增加意味着数据库批处理能力不足！
         logExecutor.scheduleAtFixedRate(() -> {
             if (queue.size() > 0 || addedCount.get() > 0 || savedCount.get() > 0 || failedCount.get() > 0) {
                 log.info("[{}] queueSize [{}] totalAdded [{}] totalSaved [{}] totalFailed [{}]",

@@ -23,15 +23,18 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 @Builder
 public class TbSqlBlockingQueueParams {
+    // 数据库并发监控的线程名称
     private final String logName;
+    /**
+     * 数据库一次批处理最大记录，需要提前压测数据库的最大批处理能力db_total_batchSize
+     * batchSize = db_total_batchSize / 节点数
+      */
     private final int batchSize;
+    /**
+     * 一次批处理最大时间，如果数据库批处理时间currentTs < maxDelay，客户端会休眠maxDelay-currentTs，防止给数据库的负载过大
+     * 如果currentTs > maxDelay, 意味着数据库批处理的能力 < 客户端当前并发量，缓存队列会越来越大，这种情况下需要优化数据库！！！
+     */
     private final long maxDelay;
+    // 监控队列时间间隔，建议设置1000
     private final long statsPrintIntervalMs;
-
-    public TbSqlBlockingQueueParams(String logName, int batchSize, long maxDelay, long statsPrintIntervalMs) {
-        this.logName = logName;
-        this.batchSize = batchSize;
-        this.maxDelay = maxDelay;
-        this.statsPrintIntervalMs = statsPrintIntervalMs;
-    }
 }
