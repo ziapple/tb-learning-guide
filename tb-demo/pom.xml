@@ -14,6 +14,7 @@
         <module>demo-netty</module>
         <module>demo-rpc</module>
         <module>demo-rpc-cluster</module>
+        <module>demo-dao</module>
     </modules>
     <artifactId>tb-demo</artifactId>
     <packaging>pom</packaging>
