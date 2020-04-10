@@ -1,4 +1,4 @@
-package com.ziapple.transport.api; /**
+/**
  * Copyright © 2016-2020 The Thingsboard Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,9 +13,21 @@ package com.ziapple.transport.api; /**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ziapple.dao;
 
-public interface SessionMsgProcessor {
+import com.ziapple.common.util.AbstractListeningExecutor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-    void onDeviceAdded(Device device);
+@Component
+public class JpaExecutorService extends AbstractListeningExecutor {
+
+    @Value("${spring.datasource.hikari.maximumPoolSize}")
+    private int poolSize;
+
+    @Override
+    protected int getThreadPollSize() {
+        return poolSize;
+    }
 
 }

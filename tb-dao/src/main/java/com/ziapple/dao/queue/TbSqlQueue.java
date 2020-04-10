@@ -1,4 +1,4 @@
-package com.ziapple.transport.api; /**
+/**
  * Copyright © 2016-2020 The Thingsboard Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,9 +13,22 @@ package com.ziapple.transport.api; /**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ziapple.dao.queue;
 
-public interface SessionMsgProcessor {
+import com.google.common.util.concurrent.ListenableFuture;
 
-    void onDeviceAdded(Device device);
+import java.util.List;
+import java.util.function.Consumer;
 
+/**
+ * 写入数据库队列
+ * @param <E>
+ */
+public interface TbSqlQueue<E> {
+
+    void init(ScheduledLogExecutorComponent logExecutor, Consumer<List<E>> saveFunction);
+
+    void destroy();
+
+    ListenableFuture<Void> add(E element);
 }

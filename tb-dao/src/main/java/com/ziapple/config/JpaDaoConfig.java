@@ -27,9 +27,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan("org.thingsboard.server.dao.sql")
-@EnableJpaRepositories("org.thingsboard.server.dao.sql")
-@EntityScan("org.thingsboard.server.dao.model.sql")
+@ComponentScan("com.ziapple.dao.repository")
+@EnableJpaRepositories("com.ziapple.dao.repository")
+@EntityScan("com.ziapple.dao.model")
 @EnableTransactionManagement
 public class JpaDaoConfig {
 

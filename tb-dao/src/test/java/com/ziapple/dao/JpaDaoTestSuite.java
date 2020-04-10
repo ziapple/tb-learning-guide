@@ -27,7 +27,6 @@ import java.util.Arrays;
         "org.thingsboard.server.dao.sql.*THIS_MUST_BE_FIXED_Test"
 })
 public class JpaDaoTestSuite {
-
     @ClassRule
     public static CustomSqlUnit sqlUnit = new CustomSqlUnit(
             Arrays.asList("sql/schema-ts.sql", "sql/schema-entities.sql", "sql/system-data.sql"),

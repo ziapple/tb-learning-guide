@@ -1,4 +1,4 @@
-package com.ziapple.transport.api; /**
+/**
  * Copyright © 2016-2020 The Thingsboard Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,9 +13,27 @@ package com.ziapple.transport.api; /**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ziapple.common.data.id;
 
-public interface SessionMsgProcessor {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ziapple.common.data.EntityType;
 
-    void onDeviceAdded(Device device);
+import java.util.UUID;
 
+public final class CustomerId extends UUIDBased implements EntityId {
+
+    private static final long serialVersionUID = 1L;
+
+    @JsonCreator
+    public CustomerId(@JsonProperty("id") UUID id) {
+        super(id);
+    }
+
+    @JsonIgnore
+    @Override
+    public EntityType getEntityType() {
+        return EntityType.CUSTOMER;
+    }
 }

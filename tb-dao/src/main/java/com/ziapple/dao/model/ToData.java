@@ -1,4 +1,4 @@
-package com.ziapple.transport.api; /**
+/**
  * Copyright © 2016-2020 The Thingsboard Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,9 +13,19 @@ package com.ziapple.transport.api; /**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ziapple.dao.model;
 
-public interface SessionMsgProcessor {
+/**
+ * The interface To dto.
+ *
+ * @param <T> the type parameter
+ */
+public interface ToData<T> {
 
-    void onDeviceAdded(Device device);
-
+    /**
+     * This method convert domain model object to data transfer object.
+     *
+     * @return the dto object
+     */
+    T toData();
 }

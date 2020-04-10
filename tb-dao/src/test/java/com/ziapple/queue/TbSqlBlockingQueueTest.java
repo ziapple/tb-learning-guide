@@ -1,9 +1,12 @@
-package com.ziapple.dao;
+package com.ziapple.queue;
 
+import com.ziapple.dao.DummyEntityDao;
+import com.ziapple.dao.DummyEntityService;
+import com.ziapple.dao.DummySqlClient;
 import com.ziapple.dao.data.TsKvEntity;
-import com.ziapple.dao.sql.ScheduledLogExecutorComponent;
-import com.ziapple.dao.sql.TbSqlBlockingQueue;
-import com.ziapple.dao.sql.TbSqlBlockingQueueParams;
+import com.ziapple.dao.queue.ScheduledLogExecutorComponent;
+import com.ziapple.dao.queue.TbSqlBlockingQueue;
+import com.ziapple.dao.queue.TbSqlBlockingQueueParams;
 import lombok.extern.slf4j.Slf4j;
 
 /**

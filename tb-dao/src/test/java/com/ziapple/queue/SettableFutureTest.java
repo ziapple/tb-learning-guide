@@ -1,4 +1,4 @@
-package com.ziapple;
+package com.ziapple.queue;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;

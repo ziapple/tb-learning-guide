@@ -1,7 +1,7 @@
 package com.ziapple.dao;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.ziapple.dao.sql.TbSqlBlockingQueue;
+import com.ziapple.dao.queue.TbSqlBlockingQueue;
 
 /**
  * 模拟Dao层

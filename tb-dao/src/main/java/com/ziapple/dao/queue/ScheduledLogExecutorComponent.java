@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.dao.sql;
+package com.ziapple.dao.queue;
 
 import com.ziapple.common.util.ThingsBoardThreadFactory;
 import org.springframework.stereotype.Component;

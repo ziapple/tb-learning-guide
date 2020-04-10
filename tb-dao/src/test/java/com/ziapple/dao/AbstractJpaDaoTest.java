@@ -15,8 +15,7 @@
  */
 package com.ziapple.dao;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+import com.ziapple.config.JpaDaoConfig;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -30,13 +29,11 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
  * Created by Valerii Sosliuk on 4/22/2017.
  */
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {JpaDaoConfig.class, SqlTsDaoConfig.class, JpaDbunitTestConfig.class})
+@ContextConfiguration(classes = {JpaDaoConfig.class})
 @TestPropertySource("classpath:sql-test.properties")
 @TestExecutionListeners({
         DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class,
-        DbUnitTestExecutionListener.class })
-@DbUnitConfiguration(databaseConnection = "dbUnitDatabaseConnection")
+        DirtiesContextTestExecutionListener.class})
 public abstract class AbstractJpaDaoTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 }

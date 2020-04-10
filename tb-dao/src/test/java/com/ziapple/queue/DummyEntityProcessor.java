@@ -1,7 +1,8 @@
-package com.ziapple.dao;
+package com.ziapple.queue;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.ziapple.dao.DummyEntityService;
 import com.ziapple.dao.data.TsKvEntity;
 
 import java.sql.Timestamp;

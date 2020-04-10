@@ -1,4 +1,4 @@
-package com.ziapple.common.data; /**
+/**
  * Copyright © 2016-2020 The Thingsboard Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,18 +13,20 @@ package com.ziapple.common.data; /**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ziapple.common.data;
 
-/**
- * ThingsBoard比这个复杂，此处做了简化，原文件增加了以下几个事情：
- * 1. 用到了Hibernete的主键UUID策略implements EntityId
- * 2. 增加了额外的附属字段，用于自定义的属性extends SearchTextBasedWithAdditionalInfo
- */
-public class Device{
+import com.ziapple.common.data.id.CustomerId;
+import com.ziapple.common.data.id.DeviceId;
+import com.ziapple.common.data.id.TenantId;
+import lombok.EqualsAndHashCode;
+
+@EqualsAndHashCode(callSuper = true)
+public class Device extends SearchTextBasedWithAdditionalInfo<DeviceId> implements HasName, HasTenantId, HasCustomerId {
 
     private static final long serialVersionUID = 2807343040519543363L;
 
-    private Long tenantId;
-    private Long customerId;
+    private TenantId tenantId;
+    private CustomerId customerId;
     private String name;
     private String type;
     private String label;
@@ -33,7 +35,12 @@ public class Device{
         super();
     }
 
+    public Device(DeviceId id) {
+        super(id);
+    }
+
     public Device(Device device) {
+        super(device);
         this.tenantId = device.getTenantId();
         this.customerId = device.getCustomerId();
         this.name = device.getName();
@@ -41,22 +48,23 @@ public class Device{
         this.label = device.getLabel();
     }
 
-    public Long getTenantId() {
+    public TenantId getTenantId() {
         return tenantId;
     }
 
-    public void setTenantId(Long tenantId) {
+    public void setTenantId(TenantId tenantId) {
         this.tenantId = tenantId;
     }
 
-    public Long getCustomerId() {
+    public CustomerId getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Long customerId) {
+    public void setCustomerId(CustomerId customerId) {
         this.customerId = customerId;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -81,6 +89,7 @@ public class Device{
         this.label = label;
     }
 
+    @Override
     public String getSearchText() {
         return getName();
     }
@@ -98,6 +107,12 @@ public class Device{
         builder.append(type);
         builder.append(", label=");
         builder.append(label);
+        builder.append(", additionalInfo=");
+        builder.append(getAdditionalInfo());
+        builder.append(", createdTime=");
+        builder.append(createdTime);
+        builder.append(", id=");
+        builder.append(id);
         builder.append("]");
         return builder.toString();
     }

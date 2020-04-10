@@ -1,4 +1,4 @@
-package com.ziapple.transport.api; /**
+/**
  * Copyright © 2016-2020 The Thingsboard Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,9 +13,12 @@ package com.ziapple.transport.api; /**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ziapple.common.data;
 
-public interface SessionMsgProcessor {
 
-    void onDeviceAdded(Device device);
+import com.ziapple.common.data.id.CustomerId;
 
+public interface HasCustomerId {
+
+    CustomerId getCustomerId();
 }

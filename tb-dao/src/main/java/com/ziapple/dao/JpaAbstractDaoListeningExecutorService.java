@@ -13,22 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.dao.sql;
+package com.ziapple.dao;
 
-import com.google.common.util.concurrent.SettableFuture;
-import lombok.Getter;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public final class TbSqlQueueElement<E> {
-    // 设置线程执行时间
-    @Getter
-    private final SettableFuture<Void> future;
-    @Getter
-    private final E entity;
+import javax.annotation.PreDestroy;
+import java.util.concurrent.Executors;
 
-    public TbSqlQueueElement(SettableFuture<Void> future, E entity) {
-        this.future = future;
-        this.entity = entity;
-    }
+public abstract class JpaAbstractDaoListeningExecutorService {
+
+    @Autowired
+    protected JpaExecutorService service;
+
 }
-
-
