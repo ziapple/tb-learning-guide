@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.dao.device;
+package com.ziapple.dao.sql;
 
 import com.datastax.driver.core.utils.UUIDs;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -25,6 +25,8 @@ import com.ziapple.common.data.id.DeviceId;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.page.TextPageLink;
 import com.ziapple.dao.AbstractJpaDaoTest;
+import com.ziapple.dao.repository.DeviceDao;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,7 +36,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -55,11 +56,11 @@ public class JpaDeviceDaoTest extends AbstractJpaDaoTest {
 
         TextPageLink pageLink1 = new TextPageLink(15, "SEARCH_TEXT");
         List<Device> devices1 = deviceDao.findDevicesByTenantId(tenantId1, pageLink1);
-        assertEquals(15, devices1.size());
+        Assert.assertEquals(15, devices1.size());
 
         TextPageLink pageLink2 = new TextPageLink(15, "SEARCH_TEXT",  devices1.get(14).getId().getId(), null);
         List<Device> devices2 = deviceDao.findDevicesByTenantId(tenantId1, pageLink2);
-        assertEquals(5, devices2.size());
+        Assert.assertEquals(5, devices2.size());
     }
 
     @Test
@@ -72,7 +73,7 @@ public class JpaDeviceDaoTest extends AbstractJpaDaoTest {
         UUID uuid = device.getId().getId();
         Device entity = deviceDao.findById(new TenantId(tenantId), uuid);
         assertNotNull(entity);
-        assertEquals(uuid, entity.getId().getId());
+        Assert.assertEquals(uuid, entity.getId().getId());
 
         ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
         ListenableFuture<Device> future = service.submit(() -> deviceDao.findById(new TenantId(tenantId), uuid));
@@ -100,7 +101,7 @@ public class JpaDeviceDaoTest extends AbstractJpaDaoTest {
 
         ListenableFuture<List<Device>> devicesFuture = deviceDao.findDevicesByTenantIdAndIdsAsync(tenantId1, deviceIds);
         List<Device> devices = devicesFuture.get();
-        assertEquals(5, devices.size());
+        Assert.assertEquals(5, devices.size());
     }
 
     @Test
@@ -123,7 +124,7 @@ public class JpaDeviceDaoTest extends AbstractJpaDaoTest {
 
         ListenableFuture<List<Device>> devicesFuture = deviceDao.findDevicesByTenantIdCustomerIdAndIdsAsync(tenantId1, customerId1, deviceIds);
         List<Device> devices = devicesFuture.get();
-        assertEquals(20, devices.size());
+        Assert.assertEquals(20, devices.size());
     }
 
     private void createDevices(UUID tenantId1, UUID tenantId2, UUID customerId1, UUID customerId2, int count) {

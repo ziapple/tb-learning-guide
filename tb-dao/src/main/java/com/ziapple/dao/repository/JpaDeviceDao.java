@@ -20,7 +20,6 @@ import com.ziapple.common.data.Device;
 import com.ziapple.common.data.UUIDConverter;
 import com.ziapple.common.data.page.TextPageLink;
 import com.ziapple.dao.JpaAbstractSearchTextDao;
-import com.ziapple.dao.device.DeviceDao;
 import com.ziapple.dao.model.DeviceEntity;
 import com.ziapple.dao.util.DaoUtil;
 import org.springframework.beans.factory.annotation.Autowired;

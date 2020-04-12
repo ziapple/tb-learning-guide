@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.config;
+package com.ziapple;
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan("com.ziapple.dao.repository")
+@ComponentScan("com.ziapple.dao")
 @EnableJpaRepositories("com.ziapple.dao.repository")
 @EntityScan("com.ziapple.dao.model")
 @EnableTransactionManagement

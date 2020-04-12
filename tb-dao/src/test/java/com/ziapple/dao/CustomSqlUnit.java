@@ -61,15 +61,17 @@ public class CustomSqlUnit extends ExternalResource {
         cleanUpDb();
 
         Connection conn = null;
+        String sql = "";
+        URL sqlFileUrl = null;
         try {
             conn = DriverManager.getConnection(dbUrl, dbUserName, dbPassword);
             for (String sqlFile : sqlFiles) {
-                URL sqlFileUrl = Resources.getResource(sqlFile);
-                String sql = Resources.toString(sqlFileUrl, Charsets.UTF_8);
+                sqlFileUrl = Resources.getResource(sqlFile);
+                sql = Resources.toString(sqlFileUrl, Charsets.UTF_8);
                 conn.createStatement().execute(sql);
             }
         } catch (IOException | SQLException e) {
-            throw new RuntimeException("Unable to start embedded hsqldb. Reason: " + e.getMessage(), e);
+            throw new RuntimeException("Unable to start embedded hsqldb. Reason: " + e.getMessage() + ":" + sqlFileUrl.getPath() + "\n" + sql, e);
         } finally {
             if (conn != null) {
                 try {

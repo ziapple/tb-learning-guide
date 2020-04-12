@@ -22,16 +22,15 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 
+// 运行ClassnameFilters中所有测试
 @RunWith(ClasspathSuite.class)
-@ClassnameFilters({
-        "org.thingsboard.server.dao.sql.*THIS_MUST_BE_FIXED_Test"
-})
+@ClassnameFilters({"com.ziapple.dao.sql.*"})
 public class JpaDaoTestSuite {
+    // 运行之前执行ClassRule
     @ClassRule
     public static CustomSqlUnit sqlUnit = new CustomSqlUnit(
             Arrays.asList("sql/schema-ts.sql", "sql/schema-entities.sql", "sql/system-data.sql"),
             "sql/drop-all-tables.sql",
             "sql-test.properties"
     );
-
 }
