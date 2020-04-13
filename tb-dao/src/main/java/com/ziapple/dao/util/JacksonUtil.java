@@ -30,6 +30,8 @@ public class JacksonUtil {
 
     public static <T> T fromString(String string, Class<T> clazz) {
         try {
+            if(string.isEmpty())
+                return null;
             return OBJECT_MAPPER.readValue(string, clazz);
         } catch (IOException e) {
             throw new IllegalArgumentException("The given string value: "

@@ -26,9 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public abstract class AbstractJsonSqlTypeDescriptor
-        implements SqlTypeDescriptor {
-
+public abstract class AbstractJsonSqlTypeDescriptor implements SqlTypeDescriptor {
     @Override
     public int getSqlType() {
         return Types.VARCHAR;

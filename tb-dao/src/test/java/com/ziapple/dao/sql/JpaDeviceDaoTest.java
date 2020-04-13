@@ -17,8 +17,6 @@ package com.ziapple.dao.sql;
 
 import com.datastax.driver.core.utils.UUIDs;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 import com.ziapple.common.data.Device;
 import com.ziapple.common.data.id.CustomerId;
 import com.ziapple.common.data.id.DeviceId;
@@ -34,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -42,7 +39,6 @@ import static org.junit.Assert.assertNotNull;
  * Created by Valerii Sosliuk on 5/6/2017.
  */
 public class JpaDeviceDaoTest extends AbstractJpaDaoTest {
-
     @Autowired
     private DeviceDao deviceDao;
 
@@ -75,10 +71,8 @@ public class JpaDeviceDaoTest extends AbstractJpaDaoTest {
         assertNotNull(entity);
         Assert.assertEquals(uuid, entity.getId().getId());
 
-        ListeningExecutorService service = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(10));
-        ListenableFuture<Device> future = service.submit(() -> deviceDao.findById(new TenantId(tenantId), uuid));
-        Device asyncDevice = future.get();
-        assertNotNull("Async device expected to be not null", asyncDevice);
+        Device result = deviceDao.findById(new TenantId(tenantId), uuid);
+        Assert.assertNotNull("Async device expected to be not null", result);
     }
 
     @Test
@@ -105,7 +99,7 @@ public class JpaDeviceDaoTest extends AbstractJpaDaoTest {
     }
 
     @Test
-    public void testFindDevicesByTenantIdAndCustomerIdAndIdsAsync() throws ExecutionException, InterruptedException {
+    public void testFindDevicesByTenantIdAndCustomerIdAndIds() throws ExecutionException, InterruptedException {
         UUID tenantId1 = UUIDs.timeBased();
         UUID customerId1 = UUIDs.timeBased();
         UUID tenantId2 = UUIDs.timeBased();
@@ -122,8 +116,11 @@ public class JpaDeviceDaoTest extends AbstractJpaDaoTest {
             deviceIds.add(deviceId2);
         }
 
+        /** 异步查询,hibernate不会立即执行save操作，返回为0
         ListenableFuture<List<Device>> devicesFuture = deviceDao.findDevicesByTenantIdCustomerIdAndIdsAsync(tenantId1, customerId1, deviceIds);
         List<Device> devices = devicesFuture.get();
+         **/
+        List<Device> devices = deviceDao.findDevicesByTenantIdCustomerIdAndIds(tenantId1, customerId1, deviceIds);
         Assert.assertEquals(20, devices.size());
     }
 
@@ -143,7 +140,8 @@ public class JpaDeviceDaoTest extends AbstractJpaDaoTest {
         device.setId(new DeviceId(deviceId));
         device.setTenantId(new TenantId(tenantId));
         device.setCustomerId(new CustomerId(customerID));
-        device.setName("SEARCH_TEXT");
+        // 名称唯一
+        device.setName("SEARCH_TEXT" + UUIDs.timeBased());
         return device;
     }
 }

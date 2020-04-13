@@ -14,5 +14,8 @@
 -- limitations under the License.
 --
 /** DEVICE **/
+SELECT * FROM device LIMIT 1;
+/**
 INSERT INTO device (id, additional_info, customer_id, type, name, label, search_text, tenant_id)
 VALUES('123', '', '1111', 'DEVICE', 'DEVICE', 'DEVICE', 'DEVICE', '111');
+**/

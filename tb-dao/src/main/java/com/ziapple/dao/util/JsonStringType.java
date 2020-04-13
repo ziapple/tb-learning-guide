@@ -20,10 +20,7 @@ import org.hibernate.usertype.DynamicParameterizedType;
 
 import java.util.Properties;
 
-public class JsonStringType
-        extends AbstractSingleColumnStandardBasicType<Object>
-        implements DynamicParameterizedType {
-
+public class JsonStringType extends AbstractSingleColumnStandardBasicType<Object>  implements DynamicParameterizedType {
     public JsonStringType() {
         super(
                 JsonStringSqlTypeDescriptor.INSTANCE,

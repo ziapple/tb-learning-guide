@@ -94,6 +94,11 @@ public class JpaDeviceDao extends JpaAbstractSearchTextDao<DeviceEntity, Device>
     }
 
     @Override
+    public List<Device> findDevicesByTenantIdCustomerIdAndIds(UUID tenantId, UUID customerId, List<UUID> deviceIds) {
+        return DaoUtil.convertDataList(deviceRepository.findDevicesByTenantIdAndCustomerIdAndIdIn(fromTimeUUID(tenantId), fromTimeUUID(customerId), fromTimeUUIDs(deviceIds)));
+    }
+
+    @Override
     public Optional<Device> findDeviceByTenantIdAndName(UUID tenantId, String name) {
         Device device = DaoUtil.getData(deviceRepository.findByTenantIdAndName(fromTimeUUID(tenantId), name));
         return Optional.ofNullable(device);

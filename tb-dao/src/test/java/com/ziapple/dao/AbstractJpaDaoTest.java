@@ -16,6 +16,7 @@
 package com.ziapple.dao;
 
 import com.ziapple.JpaDaoConfig;
+import org.junit.ClassRule;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -24,6 +25,8 @@ import org.springframework.test.context.junit4.AbstractTransactionalJUnit4Spring
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+
+import java.util.Arrays;
 
 /**
  * Created by Valerii Sosliuk on 4/22/2017.
@@ -35,5 +38,11 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
         DependencyInjectionTestExecutionListener.class,
         DirtiesContextTestExecutionListener.class})
 public abstract class AbstractJpaDaoTest extends AbstractTransactionalJUnit4SpringContextTests {
-
+    // 运行之前执行ClassRule
+    @ClassRule
+    public static CustomSqlUnit sqlUnit = new CustomSqlUnit(
+            Arrays.asList("sql/schema-ts.sql", "sql/schema-entities.sql", "sql/system-data.sql"),
+            "sql/drop-all-tables.sql",
+            "sql-test.properties"
+    );
 }

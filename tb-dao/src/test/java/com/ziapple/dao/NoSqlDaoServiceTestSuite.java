@@ -24,9 +24,7 @@ import org.junit.runner.RunWith;
 import java.util.Arrays;
 
 @RunWith(ClasspathSuite.class)
-@ClassnameFilters({
-        "org.thingsboard.server.dao.service.*ServiceNoSqlTest"
-})
+@ClassnameFilters({"org.thingsboard.server.dao.service.*ServiceNoSqlTest"})
 public class NoSqlDaoServiceTestSuite {
 
     @ClassRule
