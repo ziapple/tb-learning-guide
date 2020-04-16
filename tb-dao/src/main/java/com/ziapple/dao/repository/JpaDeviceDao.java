@@ -17,7 +17,10 @@ package com.ziapple.dao.repository;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.ziapple.common.data.Device;
+import com.ziapple.common.data.EntitySubtype;
+import com.ziapple.common.data.EntityType;
 import com.ziapple.common.data.UUIDConverter;
+import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.page.TextPageLink;
 import com.ziapple.dao.JpaAbstractSearchTextDao;
 import com.ziapple.dao.model.DeviceEntity;
@@ -125,5 +128,21 @@ public class JpaDeviceDao extends JpaAbstractSearchTextDao<DeviceEntity, Device>
                         Objects.toString(pageLink.getTextSearch(), ""),
                         pageLink.getIdOffset() == null ? NULL_UUID_STR : fromTimeUUID(pageLink.getIdOffset()),
                         new PageRequest(0, pageLink.getLimit())));
+    }
+
+    @Override
+    public ListenableFuture<List<EntitySubtype>> findTenantDeviceTypesAsync(UUID tenantId) {
+        return service.submit(() -> convertTenantDeviceTypesToDto(tenantId, deviceRepository.findTenantDeviceTypes(fromTimeUUID(tenantId))));
+    }
+
+    private List<EntitySubtype> convertTenantDeviceTypesToDto(UUID tenantId, List<String> types) {
+        List<EntitySubtype> list = Collections.emptyList();
+        if (types != null && !types.isEmpty()) {
+            list = new ArrayList<>();
+            for (String type : types) {
+                list.add(new EntitySubtype(new TenantId(tenantId), EntityType.DEVICE, type));
+            }
+        }
+        return list;
     }
 }

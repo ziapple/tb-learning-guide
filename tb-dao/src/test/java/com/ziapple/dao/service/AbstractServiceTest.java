@@ -42,7 +42,7 @@ import java.util.Comparator;
 @ContextConfiguration(classes = AbstractServiceTest.class, loader = AnnotationConfigContextLoader.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Configuration
-@ComponentScan("org.thingsboard.server")
+@ComponentScan("com.ziapple.server")
 public abstract class AbstractServiceTest {
 
     protected ObjectMapper mapper = new ObjectMapper();
@@ -69,7 +69,7 @@ public abstract class AbstractServiceTest {
     }
 
 
-        public JsonNode readFromResource(String resourceName) throws IOException {
+    public JsonNode readFromResource(String resourceName) throws IOException {
         return mapper.readTree(this.getClass().getClassLoader().getResourceAsStream(resourceName));
     }
 }

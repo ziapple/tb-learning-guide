@@ -16,6 +16,10 @@
 package com.ziapple.service;
 
 import com.ziapple.common.data.EntityType;
+import com.ziapple.common.data.relation.EntityRelation;
+import com.ziapple.common.data.relation.EntityRelationsQuery;
+import com.ziapple.common.data.relation.EntityTypeFilter;
+import com.ziapple.common.data.relation.RelationsSearchParameters;
 import lombok.Data;
 
 import java.util.Collections;

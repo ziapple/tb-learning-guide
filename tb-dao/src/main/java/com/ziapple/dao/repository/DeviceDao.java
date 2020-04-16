@@ -17,6 +17,7 @@ package com.ziapple.dao.repository;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.ziapple.common.data.Device;
+import com.ziapple.common.data.EntitySubtype;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.page.TextPageLink;
 import com.ziapple.dao.Dao;
@@ -117,4 +118,11 @@ public interface DeviceDao extends Dao<Device> {
      * @return the optional device object
      */
     Optional<Device> findDeviceByTenantIdAndName(UUID tenantId, String name);
+
+    /**
+     * Find tenants device types.
+     *
+     * @return the list of tenant device type objects
+     */
+    ListenableFuture<List<EntitySubtype>> findTenantDeviceTypesAsync(UUID tenantId);
 }
