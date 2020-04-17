@@ -19,7 +19,7 @@ import com.datastax.driver.core.utils.UUIDs;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.ziapple.common.data.id.TenantId;
-import com.ziapple.dao.model.BaseEntity;
+import com.ziapple.dao.entity.BaseEntity;
 import com.ziapple.dao.util.DaoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.repository.CrudRepository;

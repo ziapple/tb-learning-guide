@@ -15,7 +15,6 @@
  */
 package com.ziapple.dao;
 
-import com.ziapple.JpaDaoConfig;
 import org.junit.ClassRule;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

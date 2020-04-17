@@ -18,7 +18,7 @@ package com.ziapple.service;
 import com.ziapple.common.data.id.EntityId;
 import com.ziapple.common.data.id.UUIDBased;
 import com.ziapple.common.data.page.BasePageLink;
-import com.ziapple.exception.IncorrectParameterException;
+import com.ziapple.dao.exception.IncorrectParameterException;
 
 import java.util.List;
 import java.util.UUID;

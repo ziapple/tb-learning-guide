@@ -23,7 +23,7 @@ import com.ziapple.common.data.id.DeviceId;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.page.TextPageLink;
 import com.ziapple.dao.AbstractJpaDaoTest;
-import com.ziapple.dao.repository.DeviceDao;
+import com.ziapple.dao.device.DeviceDao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

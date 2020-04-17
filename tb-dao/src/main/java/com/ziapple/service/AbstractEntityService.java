@@ -17,6 +17,7 @@ package com.ziapple.service;
 
 import com.ziapple.common.data.id.EntityId;
 import com.ziapple.common.data.id.TenantId;
+import com.ziapple.service.relation.RelationService;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;

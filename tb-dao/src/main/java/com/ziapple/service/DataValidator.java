@@ -18,7 +18,7 @@ package com.ziapple.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.ziapple.common.data.BaseData;
 import com.ziapple.common.data.id.TenantId;
-import com.ziapple.exception.DataValidationException;
+import com.ziapple.dao.exception.DataValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.validator.routines.EmailValidator;
 
