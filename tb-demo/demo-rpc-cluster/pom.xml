@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tb-akka-rpc</artifactId>
+    <artifactId>demo-rpc-cluster</artifactId>
 
     <dependencies>
         <!-- akka -->

@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <name>Thingsboard Learning Akka</name>
-    <artifactId>tb-akka-demo</artifactId>
+    <artifactId>demo-akka</artifactId>
 
     <dependencies>
         <!-- akka -->

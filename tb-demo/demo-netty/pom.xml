@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <name>Thingsboard Learning Netty</name>
-    <artifactId>tb-netty-demo</artifactId>
+    <artifactId>demo-netty</artifactId>
 
     <dependencies>
         <!-- netty -->

@@ -57,6 +57,9 @@
         <cassandra-unit.version>3.5.0.1</cassandra-unit.version>
         <takari-cpsuite.version>1.2.7</takari-cpsuite.version>
         <hsqldb.version>2.5.0</hsqldb.version>
+        <spring-data-redis.version>2.1.5.RELEASE</spring-data-redis.version>
+        <jedis.version>2.9.0</jedis.version>
+        <caffeine.version>2.6.1</caffeine.version>
     </properties>
 
     <dependencies>
@@ -240,13 +243,6 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
-            </dependency>
-
-            <!-- SSL Utils -->
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk15on</artifactId>
-                <version>${bouncycastle.version}</version>
             </dependency>
 
             <!-- Kafak -->
@@ -460,6 +456,35 @@
                 <groupId>org.hsqldb</groupId>
                 <artifactId>hsqldb</artifactId>
                 <version>${hsqldb.version}</version>
+            </dependency>
+
+            <!-- spring cach -->
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-redis</artifactId>
+                <version>${spring-data-redis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>${caffeine.version}</version>
+            </dependency>
+
+            <!-- X509 -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk15on</artifactId>
+                <version>${bouncycastle.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

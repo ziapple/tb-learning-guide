@@ -26,6 +26,15 @@ CREATE TABLE IF NOT EXISTS device (
     CONSTRAINT device_name_unq_key UNIQUE (tenant_id, name)
 );
 
+CREATE TABLE IF NOT EXISTS device_credentials (
+    id varchar(31) NOT NULL CONSTRAINT device_credentials_pkey PRIMARY KEY,
+    credentials_id varchar,
+    credentials_type varchar(255),
+    credentials_value varchar,
+    device_id varchar(31),
+    CONSTRAINT device_credentials_id_unq_key UNIQUE (credentials_id)
+);
+
 CREATE TABLE IF NOT EXISTS customer (
     id varchar(31) NOT NULL CONSTRAINT customer_pkey PRIMARY KEY,
     additional_info varchar,
