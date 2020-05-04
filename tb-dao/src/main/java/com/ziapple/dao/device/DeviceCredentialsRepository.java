@@ -15,7 +15,7 @@
  */
 package com.ziapple.dao.device;
 
-import com.ziapple.dao.entity.DeviceCredentialsEntity;
+import com.ziapple.dao.model.entity.DeviceCredentialsEntity;
 import com.ziapple.dao.util.SqlDao;
 import org.springframework.data.repository.CrudRepository;
 

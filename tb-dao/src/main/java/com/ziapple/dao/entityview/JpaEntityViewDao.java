@@ -23,7 +23,7 @@ import com.ziapple.common.data.UUIDConverter;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.page.TextPageLink;
 import com.ziapple.dao.JpaAbstractSearchTextDao;
-import com.ziapple.dao.entity.EntityViewEntity;
+import com.ziapple.dao.model.entity.EntityViewEntity;
 import com.ziapple.dao.util.DaoUtil;
 import com.ziapple.dao.util.SqlDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 import static com.ziapple.common.data.UUIDConverter.fromTimeUUID;
-import static com.ziapple.dao.entity.ModelConstants.NULL_UUID_STR;
+import static com.ziapple.dao.model.ModelConstants.NULL_UUID_STR;
 
 /**
  * Created by Victor Basanets on 8/31/2017.

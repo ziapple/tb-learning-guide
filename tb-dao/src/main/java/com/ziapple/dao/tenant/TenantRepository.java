@@ -15,7 +15,7 @@
  */
 package com.ziapple.dao.tenant;
 
-import com.ziapple.dao.entity.TenantEntity;
+import com.ziapple.dao.model.entity.TenantEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

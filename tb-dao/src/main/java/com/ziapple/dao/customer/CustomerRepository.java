@@ -15,7 +15,7 @@
  */
 package com.ziapple.dao.customer;
 
-import com.ziapple.dao.entity.CustomerEntity;
+import com.ziapple.dao.model.entity.CustomerEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

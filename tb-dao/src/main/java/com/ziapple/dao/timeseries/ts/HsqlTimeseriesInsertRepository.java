@@ -15,8 +15,7 @@
  */
 package com.ziapple.dao.timeseries.ts;
 
-import com.ziapple.dao.entity.TsKvEntity;
-import com.ziapple.dao.timeseries.ts.AbstractTimeseriesInsertRepository;
+import com.ziapple.dao.model.entity.TsKvEntity;
 import com.ziapple.dao.util.HsqlDao;
 import com.ziapple.dao.util.SqlTsDao;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;

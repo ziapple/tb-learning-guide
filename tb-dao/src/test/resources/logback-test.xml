@@ -8,13 +8,16 @@
     </appender>
 
     <logger name="com.ziapple.dao" level="INFO"/>
+    <logger name="com.ziapple.service" level="INFO"/>
     <logger name="org.apache.cassandra" level="WARN"/>
     <logger name="org.cassandraunit" level="WARN" />
     <logger name="org.apache.cassandra" level="WARN" />
+    <!--
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
     <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="TRACE"/>
     <logger name="org.hibernate.engine.QueryParameters" level="DEBUG"/>
     <logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG"/>
+    -->
 
     <root level="WARN">
         <appender-ref ref="console"/>

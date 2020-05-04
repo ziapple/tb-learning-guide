@@ -30,9 +30,11 @@ import com.ziapple.common.data.security.DeviceCredentials;
 import com.ziapple.common.data.security.DeviceCredentialsType;
 import com.ziapple.dao.customer.CustomerDao;
 import com.ziapple.dao.device.DeviceDao;
-import com.ziapple.dao.tenant.TenantDao;
 import com.ziapple.dao.exception.DataValidationException;
-import com.ziapple.service.*;
+import com.ziapple.dao.tenant.TenantDao;
+import com.ziapple.service.AbstractEntityService;
+import com.ziapple.service.DataValidator;
+import com.ziapple.service.PaginatedRemover;
 import com.ziapple.service.entityview.EntityViewService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -51,7 +53,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static com.ziapple.common.data.CacheConstants.DEVICE_CACHE;
-import static com.ziapple.dao.entity.ModelConstants.NULL_UUID;
+import static com.ziapple.dao.model.ModelConstants.NULL_UUID;
 import static com.ziapple.dao.util.DaoUtil.toUUIDs;
 import static com.ziapple.service.Validator.*;
 

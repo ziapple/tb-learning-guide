@@ -19,7 +19,7 @@ import com.ziapple.common.data.Customer;
 import com.ziapple.common.data.UUIDConverter;
 import com.ziapple.common.data.page.TextPageLink;
 import com.ziapple.dao.JpaAbstractSearchTextDao;
-import com.ziapple.dao.entity.CustomerEntity;
+import com.ziapple.dao.model.entity.CustomerEntity;
 import com.ziapple.dao.util.DaoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -31,7 +31,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.ziapple.dao.entity.ModelConstants.NULL_UUID_STR;
+import static com.ziapple.dao.model.ModelConstants.NULL_UUID_STR;
 
 /**
  * Created by Valerii Sosliuk on 5/6/2017.

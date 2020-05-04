@@ -16,7 +16,7 @@
 package com.ziapple.dao.util;
 
 import com.ziapple.common.data.id.UUIDBased;
-import com.ziapple.dao.entity.ToData;
+import com.ziapple.dao.model.ToData;
 
 import java.util.*;
 

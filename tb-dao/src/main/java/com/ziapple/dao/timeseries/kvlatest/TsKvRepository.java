@@ -16,8 +16,8 @@
 package com.ziapple.dao.timeseries.kvlatest;
 
 import com.ziapple.common.data.EntityType;
-import com.ziapple.dao.entity.TsKvCompositeKey;
-import com.ziapple.dao.entity.TsKvEntity;
+import com.ziapple.dao.model.entity.TsKvCompositeKey;
+import com.ziapple.dao.model.entity.TsKvEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

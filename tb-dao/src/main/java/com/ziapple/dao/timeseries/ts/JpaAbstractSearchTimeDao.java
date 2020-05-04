@@ -19,7 +19,7 @@ import com.datastax.driver.core.utils.UUIDs;
 import com.ziapple.common.data.UUIDConverter;
 import com.ziapple.common.data.page.TimePageLink;
 import com.ziapple.dao.JpaAbstractDao;
-import com.ziapple.dao.entity.BaseEntity;
+import com.ziapple.dao.model.BaseEntity;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;

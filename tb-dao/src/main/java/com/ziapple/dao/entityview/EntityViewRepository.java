@@ -15,7 +15,7 @@
  */
 package com.ziapple.dao.entityview;
 
-import com.ziapple.dao.entity.EntityViewEntity;
+import com.ziapple.dao.model.entity.EntityViewEntity;
 import com.ziapple.dao.util.SqlDao;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
