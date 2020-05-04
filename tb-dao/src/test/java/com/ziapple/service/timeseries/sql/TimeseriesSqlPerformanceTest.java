@@ -47,7 +47,7 @@ public class TimeseriesSqlPerformanceTest extends AbstractServiceTest {
     // 线程数
     private static int threads = 10;
     // 总的写入数量
-    private static int total_tps = 1000;git
+    private static int total_tps = 1000;
     // 模拟租户
     private TenantId tenantId;
     // 监控器

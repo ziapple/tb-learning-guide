@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAutoConfiguration
 @ComponentScan("com.ziapple.dao")
 @EnableJpaRepositories("com.ziapple.dao")
-@EntityScan("com.ziapple.dao.entity")
+@EntityScan("com.ziapple.dao.model")
 @EnableTransactionManagement
 public class JpaDaoConfig {
 
