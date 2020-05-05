@@ -18,7 +18,7 @@ package com.ziapple.dao.device;
 import com.ziapple.common.data.UUIDConverter;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.security.DeviceCredentials;
-import com.ziapple.dao.JpaAbstractDao;
+import com.ziapple.dao.sql.JpaAbstractDao;
 import com.ziapple.dao.model.entity.DeviceCredentialsEntity;
 import com.ziapple.dao.util.DaoUtil;
 import com.ziapple.dao.util.SqlDao;

@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.ziapple.dao.nosql.CassandraBaseTimeseriesDao.DESC_ORDER;
+import static com.ziapple.dao.timeseries.nosql.CassandraBaseTimeseriesDao.DESC_ORDER;
 
 /**
  * Created by ashvayka on 21.02.17.

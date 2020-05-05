@@ -24,7 +24,7 @@ import com.ziapple.common.data.id.EntityId;
 import com.ziapple.common.data.id.EntityViewId;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.kv.*;
-import com.ziapple.dao.timeseries.ts.TimeseriesDao;
+import com.ziapple.dao.timeseries.sql.ts.TimeseriesDao;
 import com.ziapple.dao.exception.IncorrectParameterException;
 import com.ziapple.service.entityview.EntityViewService;
 import com.ziapple.service.Validator;

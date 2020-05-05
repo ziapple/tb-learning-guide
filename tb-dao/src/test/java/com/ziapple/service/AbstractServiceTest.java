@@ -21,12 +21,10 @@ import com.ziapple.common.data.BaseData;
 import com.ziapple.common.data.id.EntityId;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.id.UUIDBased;
-import com.ziapple.dao.CustomSqlUnit;
 import com.ziapple.service.device.DeviceService;
 import com.ziapple.service.entityview.EntityViewService;
 import com.ziapple.service.tenant.TenantService;
 import com.ziapple.service.timeseries.TimeseriesService;
-import org.junit.ClassRule;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
@@ -37,7 +35,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Comparator;
 
 
@@ -47,14 +44,6 @@ import java.util.Comparator;
 @Configuration
 @ComponentScan({"com.ziapple.service","com.ziapple.dao"})
 public abstract class AbstractServiceTest {
-    // 运行之前执行ClassRule
-    @ClassRule
-    public static CustomSqlUnit sqlUnit = new CustomSqlUnit(
-            Arrays.asList("sql/schema-ts.sql", "sql/schema-entities.sql", "sql/system-data.sql"),
-            "sql/drop-all-tables.sql",
-            "sql-test.properties"
-    );
-
     protected ObjectMapper mapper = new ObjectMapper();
 
     public static final TenantId SYSTEM_TENANT_ID = new TenantId(EntityId.NULL_UUID);

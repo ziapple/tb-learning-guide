@@ -19,9 +19,10 @@ import com.ziapple.common.data.Tenant;
 import com.ziapple.common.data.UUIDConverter;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.page.TextPageLink;
-import com.ziapple.dao.JpaAbstractSearchTextDao;
 import com.ziapple.dao.model.entity.TenantEntity;
+import com.ziapple.dao.sql.JpaAbstractSearchTextDao;
 import com.ziapple.dao.util.DaoUtil;
+import com.ziapple.dao.util.SqlDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.repository.CrudRepository;
@@ -36,6 +37,7 @@ import static com.ziapple.dao.model.ModelConstants.NULL_UUID_STR;
  * Created by Valerii Sosliuk on 4/30/2017.
  */
 @Component
+@SqlDao
 public class JpaTenantDao extends JpaAbstractSearchTextDao<TenantEntity, Tenant> implements TenantDao {
 
     @Autowired
