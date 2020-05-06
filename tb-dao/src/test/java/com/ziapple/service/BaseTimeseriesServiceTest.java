@@ -74,14 +74,20 @@ public abstract class BaseTimeseriesServiceTest extends AbstractServiceTest {
         tenantService.deleteTenant(tenantId);
     }
 
+    /**
+     * 测试ts_latest表，一个device,key，只存一条数据
+     * @throws Exception
+     */
     @Test
     public void testFindAllLatest() throws Exception {
         DeviceId deviceId = new DeviceId(UUIDs.timeBased());
 
+        // 测试三个时序数据42,41,40,42是最新的
         saveEntries(deviceId, TS - 2);
         saveEntries(deviceId, TS - 1);
         saveEntries(deviceId, TS);
 
+        // 验证最新的时序数据，ts=42
         testLatestTsAndVerify(deviceId);
 
         EntityView entityView = saveAndCreateEntityView(deviceId, Arrays.asList(STRING_KEY, DOUBLE_KEY, LONG_KEY, BOOLEAN_KEY));
@@ -89,6 +95,12 @@ public abstract class BaseTimeseriesServiceTest extends AbstractServiceTest {
         testLatestTsAndVerify(entityView.getId());
     }
 
+    /**
+     * 测试ts_latest数据
+     * @param entityId
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
     private void testLatestTsAndVerify(EntityId entityId) throws ExecutionException, InterruptedException {
         List<TsKvEntry> tsList = tsService.findAllLatest(tenantId, entityId).get();
 

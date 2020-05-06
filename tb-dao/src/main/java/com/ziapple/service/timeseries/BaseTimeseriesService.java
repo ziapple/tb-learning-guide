@@ -82,7 +82,7 @@ public class BaseTimeseriesService implements TimeseriesService {
         if (entityId.getEntityType().equals(EntityType.ENTITY_VIEW)) {
             EntityView entityView = entityViewService.findEntityViewById(tenantId, (EntityViewId) entityId);
             List<String> filteredKeys = new ArrayList<>(keys);
-            if (entityView.getKeys() != null && entityView.getKeys().getTimeseries() != null &&
+            if (entityView.getKeys() != null &&  entityView.getKeys().getTimeseries() != null &&
                     !entityView.getKeys().getTimeseries().isEmpty()) {
                 filteredKeys.retainAll(entityView.getKeys().getTimeseries());
             }
