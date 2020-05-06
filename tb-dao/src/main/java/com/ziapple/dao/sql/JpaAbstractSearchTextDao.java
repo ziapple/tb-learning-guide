@@ -16,7 +16,7 @@
 package com.ziapple.dao.sql;
 
 import com.ziapple.dao.model.BaseEntity;
-import com.ziapple.dao.model.entity.SearchTextEntity;
+import com.ziapple.dao.model.sql.SearchTextEntity;
 
 /**
  * Created by Valerii Sosliuk on 5/6/2017.

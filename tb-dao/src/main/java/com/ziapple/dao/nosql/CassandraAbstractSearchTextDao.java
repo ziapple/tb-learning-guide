@@ -22,7 +22,7 @@ import com.datastax.driver.core.querybuilder.Select.Where;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.page.TextPageLink;
 import com.ziapple.dao.model.ModelConstants;
-import com.ziapple.dao.model.entity.SearchTextEntity;
+import com.ziapple.dao.model.sql.SearchTextEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 

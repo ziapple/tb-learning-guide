@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.dao.model.entity;
+package com.ziapple.dao.model.sql;
 
 import com.datastax.driver.core.utils.UUIDs;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.ziapple.common.data.Customer;
-import com.ziapple.common.data.UUIDConverter;
-import com.ziapple.common.data.id.CustomerId;
+import com.ziapple.common.data.Tenant;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.dao.model.BaseSqlEntity;
 import com.ziapple.dao.model.ModelConstants;
@@ -33,25 +31,25 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+@Table(name = ModelConstants.TENANT_COLUMN_FAMILY_NAME)
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @TypeDef(name = "json", typeClass = JsonStringType.class)
-@Table(name = ModelConstants.CUSTOMER_COLUMN_FAMILY_NAME)
-public final class CustomerEntity extends BaseSqlEntity<Customer> implements SearchTextEntity<Customer> {
+public final class TenantEntity extends BaseSqlEntity<Tenant> implements SearchTextEntity<Tenant> {
 
-    @Column(name = ModelConstants.CUSTOMER_TENANT_ID_PROPERTY)
-    private String tenantId;
-    
-    @Column(name = ModelConstants.CUSTOMER_TITLE_PROPERTY)
+    @Column(name = ModelConstants.TENANT_TITLE_PROPERTY)
     private String title;
-    
+
     @Column(name = ModelConstants.SEARCH_TEXT_PROPERTY)
     private String searchText;
-    
+
+    @Column(name = ModelConstants.TENANT_REGION_PROPERTY)
+    private String region;
+
     @Column(name = ModelConstants.COUNTRY_PROPERTY)
     private String country;
-    
+
     @Column(name = ModelConstants.STATE_PROPERTY)
     private String state;
 
@@ -74,28 +72,28 @@ public final class CustomerEntity extends BaseSqlEntity<Customer> implements Sea
     private String email;
 
     @Type(type = "json")
-    @Column(name = ModelConstants.CUSTOMER_ADDITIONAL_INFO_PROPERTY)
+    @Column(name = ModelConstants.TENANT_ADDITIONAL_INFO_PROPERTY)
     private JsonNode additionalInfo;
 
-    public CustomerEntity() {
+    public TenantEntity() {
         super();
     }
 
-    public CustomerEntity(Customer customer) {
-        if (customer.getId() != null) {
-            this.setId(customer.getId().getId());
+    public TenantEntity(Tenant tenant) {
+        if (tenant.getId() != null) {
+            this.setId(tenant.getId().getId());
         }
-        this.tenantId = UUIDConverter.fromTimeUUID(customer.getTenantId().getId());
-        this.title = customer.getTitle();
-        this.country = customer.getCountry();
-        this.state = customer.getState();
-        this.city = customer.getCity();
-        this.address = customer.getAddress();
-        this.address2 = customer.getAddress2();
-        this.zip = customer.getZip();
-        this.phone = customer.getPhone();
-        this.email = customer.getEmail();
-        this.additionalInfo = customer.getAdditionalInfo();
+        this.title = tenant.getTitle();
+        this.region = tenant.getRegion();
+        this.country = tenant.getCountry();
+        this.state = tenant.getState();
+        this.city = tenant.getCity();
+        this.address = tenant.getAddress();
+        this.address2 = tenant.getAddress2();
+        this.zip = tenant.getZip();
+        this.phone = tenant.getPhone();
+        this.email = tenant.getEmail();
+        this.additionalInfo = tenant.getAdditionalInfo();
     }
 
     @Override
@@ -108,21 +106,27 @@ public final class CustomerEntity extends BaseSqlEntity<Customer> implements Sea
         this.searchText = searchText;
     }
 
-    @Override
-    public Customer toData() {
-        Customer customer = new Customer(new CustomerId(getId()));
-        customer.setCreatedTime(UUIDs.unixTimestamp(getId()));
-        customer.setTenantId(new TenantId(UUIDConverter.fromString(tenantId)));
-        customer.setTitle(title);
-        customer.setCountry(country);
-        customer.setState(state);
-        customer.setCity(city);
-        customer.setAddress(address);
-        customer.setAddress2(address2);
-        customer.setZip(zip);
-        customer.setPhone(phone);
-        customer.setEmail(email);
-        customer.setAdditionalInfo(additionalInfo);
-        return customer;
+    public String getSearchText() {
+        return searchText;
     }
+
+    @Override
+    public Tenant toData() {
+        Tenant tenant = new Tenant(new TenantId(getId()));
+        tenant.setCreatedTime(UUIDs.unixTimestamp(getId()));
+        tenant.setTitle(title);
+        tenant.setRegion(region);
+        tenant.setCountry(country);
+        tenant.setState(state);
+        tenant.setCity(city);
+        tenant.setAddress(address);
+        tenant.setAddress2(address2);
+        tenant.setZip(zip);
+        tenant.setPhone(phone);
+        tenant.setEmail(email);
+        tenant.setAdditionalInfo(additionalInfo);
+        return tenant;
+    }
+
+
 }

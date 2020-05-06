@@ -13,14 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.dao.model.entity;
+package com.ziapple.dao.model.sql.ts;
 
-import com.ziapple.dao.model.BaseEntity;
+import com.ziapple.common.data.EntityType;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public interface SearchTextEntity<D> extends BaseEntity<D> {
+import javax.persistence.Transient;
+import java.io.Serializable;
 
-    String getSearchTextSource();
-    
-    void setSearchText(String searchText);
-    
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class TsKvLatestCompositeKey implements Serializable{
+
+    @Transient
+    private static final long serialVersionUID = -4089175869616037523L;
+
+    private EntityType entityType;
+    private String entityId;
+    private String key;
 }

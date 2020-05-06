@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.dao.model.entity;
+package com.ziapple.dao.model.nosql;
 
 import com.datastax.driver.core.utils.UUIDs;
+import com.datastax.driver.mapping.annotations.Column;
+import com.datastax.driver.mapping.annotations.PartitionKey;
+import com.datastax.driver.mapping.annotations.Table;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ziapple.common.data.EntityType;
@@ -25,47 +28,54 @@ import com.ziapple.common.data.id.EntityIdFactory;
 import com.ziapple.common.data.id.EntityViewId;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.objects.TelemetryEntityView;
-import com.ziapple.dao.model.BaseSqlEntity;
 import com.ziapple.dao.model.ModelConstants;
-import com.ziapple.dao.util.mapping.JsonStringType;
+import com.ziapple.dao.model.sql.SearchTextEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 
-import javax.persistence.*;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.io.IOException;
+import java.util.UUID;
 
-import static com.ziapple.dao.model.ModelConstants.ENTITY_TYPE_PROPERTY;
+import static com.ziapple.dao.model.ModelConstants.*;
+
 
 /**
- * Created by Victor Basanets on 8/30/2017.
+ * Created by Victor Basanets on 8/31/2017.
  */
-
 @Data
-@EqualsAndHashCode(callSuper = true)
-@Entity
-@TypeDef(name = "json", typeClass = JsonStringType.class)
-@Table(name = ModelConstants.ENTITY_VIEW_TABLE_FAMILY_NAME)
+@Table(name = ENTITY_VIEW_TABLE_FAMILY_NAME)
+@EqualsAndHashCode
+@ToString
 @Slf4j
-public class EntityViewEntity extends BaseSqlEntity<EntityView> implements SearchTextEntity<EntityView> {
+public class EntityViewEntity implements SearchTextEntity<EntityView> {
 
-    @Column(name = ModelConstants.ENTITY_VIEW_ENTITY_ID_PROPERTY)
-    private String entityId;
+    @PartitionKey(value = 0)
+    @Column(name = ID_PROPERTY)
+    private UUID id;
+
+    @PartitionKey(value = 1)
+    @Column(name = ModelConstants.ENTITY_VIEW_TENANT_ID_PROPERTY)
+    private UUID tenantId;
+
+    @PartitionKey(value = 2)
+    @Column(name = ModelConstants.ENTITY_VIEW_CUSTOMER_ID_PROPERTY)
+    private UUID customerId;
+
+    @PartitionKey(value = 3)
+    @Column(name = DEVICE_TYPE_PROPERTY)
+    private String type;
 
     @Enumerated(EnumType.STRING)
     @Column(name = ENTITY_TYPE_PROPERTY)
     private EntityType entityType;
 
-    @Column(name = ModelConstants.ENTITY_VIEW_TENANT_ID_PROPERTY)
-    private String tenantId;
-
-    @Column(name = ModelConstants.ENTITY_VIEW_CUSTOMER_ID_PROPERTY)
-    private String customerId;
-
-    @Column(name = ModelConstants.DEVICE_TYPE_PROPERTY)
-    private String type;
+    @Column(name = ModelConstants.ENTITY_VIEW_ENTITY_ID_PROPERTY)
+    private UUID entityId;
 
     @Column(name = ModelConstants.ENTITY_VIEW_NAME_PROPERTY)
     private String name;
@@ -94,17 +104,17 @@ public class EntityViewEntity extends BaseSqlEntity<EntityView> implements Searc
 
     public EntityViewEntity(EntityView entityView) {
         if (entityView.getId() != null) {
-            this.setId(entityView.getId().getId());
+            this.id = entityView.getId().getId();
         }
         if (entityView.getEntityId() != null) {
-            this.entityId = toString(entityView.getEntityId().getId());
+            this.entityId = entityView.getEntityId().getId();
             this.entityType = entityView.getEntityId().getEntityType();
         }
         if (entityView.getTenantId() != null) {
-            this.tenantId = toString(entityView.getTenantId().getId());
+            this.tenantId = entityView.getTenantId().getId();
         }
         if (entityView.getCustomerId() != null) {
-            this.customerId = toString(entityView.getCustomerId().getId());
+            this.customerId = entityView.getCustomerId().getId();
         }
         this.type = entityView.getType();
         this.name = entityView.getName();
@@ -125,23 +135,17 @@ public class EntityViewEntity extends BaseSqlEntity<EntityView> implements Searc
     }
 
     @Override
-    public void setSearchText(String searchText) {
-        this.searchText = searchText;
-    }
-
-    @Override
     public EntityView toData() {
-        EntityView entityView = new EntityView(new EntityViewId(getId()));
-        entityView.setCreatedTime(UUIDs.unixTimestamp(getId()));
-
+        EntityView entityView = new EntityView(new EntityViewId(id));
+        entityView.setCreatedTime(UUIDs.unixTimestamp(id));
         if (entityId != null) {
-            entityView.setEntityId(EntityIdFactory.getByTypeAndId(entityType.name(), toUUID(entityId).toString()));
+            entityView.setEntityId(EntityIdFactory.getByTypeAndId(entityType.name(), entityId.toString()));
         }
         if (tenantId != null) {
-            entityView.setTenantId(new TenantId(toUUID(tenantId)));
+            entityView.setTenantId(new TenantId(tenantId));
         }
         if (customerId != null) {
-            entityView.setCustomerId(new CustomerId(toUUID(customerId)));
+            entityView.setCustomerId(new CustomerId(customerId));
         }
         entityView.setType(type);
         entityView.setName(name);

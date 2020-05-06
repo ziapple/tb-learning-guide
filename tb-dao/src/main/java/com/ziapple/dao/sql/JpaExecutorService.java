@@ -16,10 +16,12 @@
 package com.ziapple.dao.sql;
 
 import com.ziapple.common.util.AbstractListeningExecutor;
+import com.ziapple.dao.util.SqlDao;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
+@SqlDao
 public class JpaExecutorService extends AbstractListeningExecutor {
 
     @Value("${spring.datasource.hikari.maximumPoolSize}")

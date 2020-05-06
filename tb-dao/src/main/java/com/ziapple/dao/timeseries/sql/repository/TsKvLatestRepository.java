@@ -16,8 +16,8 @@
 package com.ziapple.dao.timeseries.sql.repository;
 
 import com.ziapple.common.data.EntityType;
-import com.ziapple.dao.model.entity.TsKvLatestCompositeKey;
-import com.ziapple.dao.model.entity.TsKvLatestEntity;
+import com.ziapple.dao.model.sql.ts.TsKvLatestCompositeKey;
+import com.ziapple.dao.model.sql.ts.TsKvLatestEntity;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

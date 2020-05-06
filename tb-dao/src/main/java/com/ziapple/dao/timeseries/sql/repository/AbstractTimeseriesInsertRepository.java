@@ -15,7 +15,7 @@
  */
 package com.ziapple.dao.timeseries.sql.repository;
 
-import com.ziapple.dao.model.entity.AbstractTsKvEntity;
+import com.ziapple.dao.model.sql.AbstractTsKvEntity;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 

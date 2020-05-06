@@ -23,7 +23,7 @@ import com.ziapple.common.data.UUIDConverter;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.page.TextPageLink;
 import com.ziapple.dao.sql.JpaAbstractSearchTextDao;
-import com.ziapple.dao.model.entity.EntityViewEntity;
+import com.ziapple.dao.model.sql.EntityViewEntity;
 import com.ziapple.dao.util.DaoUtil;
 import com.ziapple.dao.util.SqlDao;
 import org.springframework.beans.factory.annotation.Autowired;

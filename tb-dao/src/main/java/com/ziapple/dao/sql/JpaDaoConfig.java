@@ -15,6 +15,7 @@
  */
 package com.ziapple.dao.sql;
 
+import com.ziapple.dao.util.SqlDao;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories("com.ziapple.dao")
 @EntityScan("com.ziapple.dao.model")
 @EnableTransactionManagement
+@SqlDao
 public class JpaDaoConfig {
 
 }

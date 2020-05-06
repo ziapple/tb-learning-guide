@@ -20,7 +20,7 @@ import com.ziapple.common.data.Customer;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.page.TextPageLink;
 import com.ziapple.dao.model.ModelConstants;
-import com.ziapple.dao.model.entity.CustomerEntity;
+import com.ziapple.dao.model.nosql.CustomerEntity;
 import com.ziapple.dao.nosql.CassandraAbstractSearchTextDao;
 import com.ziapple.dao.util.DaoUtil;
 import com.ziapple.dao.util.filter.NoSqlDao;

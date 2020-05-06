@@ -29,7 +29,7 @@ import com.ziapple.common.data.EntityType;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.page.TextPageLink;
 import com.ziapple.dao.model.EntitySubtypeEntity;
-import com.ziapple.dao.model.entity.DeviceEntity;
+import com.ziapple.dao.model.nosql.DeviceEntity;
 import com.ziapple.dao.nosql.CassandraAbstractSearchTextDao;
 import com.ziapple.dao.util.DaoUtil;
 import com.ziapple.dao.util.filter.NoSqlDao;

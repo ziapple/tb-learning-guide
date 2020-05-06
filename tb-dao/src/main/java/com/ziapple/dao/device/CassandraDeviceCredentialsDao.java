@@ -19,7 +19,7 @@ import com.datastax.driver.core.querybuilder.Select.Where;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.security.DeviceCredentials;
 import com.ziapple.dao.model.ModelConstants;
-import com.ziapple.dao.model.entity.DeviceCredentialsEntity;
+import com.ziapple.dao.model.sql.DeviceCredentialsEntity;
 import com.ziapple.dao.nosql.CassandraAbstractModelDao;
 import com.ziapple.dao.util.DaoUtil;
 import com.ziapple.dao.util.filter.NoSqlDao;

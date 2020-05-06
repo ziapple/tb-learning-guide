@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.dao.model.entity;
+package com.ziapple.dao.model.sql.ts;
 
 import com.ziapple.common.data.EntityType;
 import com.ziapple.common.data.kv.BasicTsKvEntry;
 import com.ziapple.common.data.kv.TsKvEntry;
 import com.ziapple.dao.model.ToData;
+import com.ziapple.dao.model.sql.AbstractTsKvEntity;
 import lombok.Data;
 
 import javax.persistence.*;

@@ -19,7 +19,7 @@ import com.ziapple.common.data.UUIDConverter;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.security.DeviceCredentials;
 import com.ziapple.dao.sql.JpaAbstractDao;
-import com.ziapple.dao.model.entity.DeviceCredentialsEntity;
+import com.ziapple.dao.model.sql.DeviceCredentialsEntity;
 import com.ziapple.dao.util.DaoUtil;
 import com.ziapple.dao.util.SqlDao;
 import org.springframework.beans.factory.annotation.Autowired;

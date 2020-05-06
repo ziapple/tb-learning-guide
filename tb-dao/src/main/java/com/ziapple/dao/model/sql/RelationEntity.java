@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.dao.model.entity;
+package com.ziapple.dao.model.sql;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.ziapple.common.data.UUIDConverter;

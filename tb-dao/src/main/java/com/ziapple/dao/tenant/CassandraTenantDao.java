@@ -18,7 +18,7 @@ package com.ziapple.dao.tenant;
 import com.ziapple.common.data.Tenant;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.page.TextPageLink;
-import com.ziapple.dao.model.entity.TenantEntity;
+import com.ziapple.dao.model.nosql.TenantEntity;
 import com.ziapple.dao.nosql.CassandraAbstractSearchTextDao;
 import com.ziapple.dao.util.DaoUtil;
 import com.ziapple.dao.util.filter.NoSqlDao;
