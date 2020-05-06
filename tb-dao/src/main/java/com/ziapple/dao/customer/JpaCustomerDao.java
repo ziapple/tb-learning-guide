@@ -18,9 +18,10 @@ package com.ziapple.dao.customer;
 import com.ziapple.common.data.Customer;
 import com.ziapple.common.data.UUIDConverter;
 import com.ziapple.common.data.page.TextPageLink;
-import com.ziapple.dao.JpaAbstractSearchTextDao;
-import com.ziapple.dao.entity.CustomerEntity;
+import com.ziapple.dao.sql.JpaAbstractSearchTextDao;
+import com.ziapple.dao.model.entity.CustomerEntity;
 import com.ziapple.dao.util.DaoUtil;
+import com.ziapple.dao.util.SqlDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.repository.CrudRepository;
@@ -31,12 +32,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.ziapple.dao.entity.ModelConstants.NULL_UUID_STR;
+import static com.ziapple.dao.model.ModelConstants.NULL_UUID_STR;
 
 /**
  * Created by Valerii Sosliuk on 5/6/2017.
  */
 @Component
+@SqlDao
 public class JpaCustomerDao extends JpaAbstractSearchTextDao<CustomerEntity, Customer> implements CustomerDao {
 
     @Autowired

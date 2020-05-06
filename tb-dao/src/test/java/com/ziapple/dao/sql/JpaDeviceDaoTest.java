@@ -22,7 +22,6 @@ import com.ziapple.common.data.id.CustomerId;
 import com.ziapple.common.data.id.DeviceId;
 import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.page.TextPageLink;
-import com.ziapple.dao.AbstractJpaDaoTest;
 import com.ziapple.dao.device.DeviceDao;
 import org.junit.Assert;
 import org.junit.Test;
@@ -116,11 +115,8 @@ public class JpaDeviceDaoTest extends AbstractJpaDaoTest {
             deviceIds.add(deviceId2);
         }
 
-        /** 异步查询,hibernate不会立即执行save操作，返回为0
         ListenableFuture<List<Device>> devicesFuture = deviceDao.findDevicesByTenantIdCustomerIdAndIdsAsync(tenantId1, customerId1, deviceIds);
         List<Device> devices = devicesFuture.get();
-         **/
-        List<Device> devices = deviceDao.findDevicesByTenantIdCustomerIdAndIds(tenantId1, customerId1, deviceIds);
         Assert.assertEquals(20, devices.size());
     }
 

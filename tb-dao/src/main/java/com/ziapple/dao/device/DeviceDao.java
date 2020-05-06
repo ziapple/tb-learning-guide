@@ -101,16 +101,6 @@ public interface DeviceDao extends Dao<Device> {
     ListenableFuture<List<Device>> findDevicesByTenantIdCustomerIdAndIdsAsync(UUID tenantId, UUID customerId, List<UUID> deviceIds);
 
     /**
-     * Find devices by tenantId, customerId and devices Ids.
-     *
-     * @param tenantId the tenantId
-     * @param customerId the customerId
-     * @param deviceIds the device Ids
-     * @return the list of device objects
-     */
-    List<Device> findDevicesByTenantIdCustomerIdAndIds(UUID tenantId, UUID customerId, List<UUID> deviceIds);
-
-    /**
      * Find devices by tenantId and device name.
      *
      * @param tenantId the tenantId

@@ -15,7 +15,7 @@
  */
 package com.ziapple.dao.device;
 
-import com.ziapple.dao.entity.DeviceEntity;
+import com.ziapple.dao.model.entity.DeviceEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

@@ -22,11 +22,12 @@ import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.data.page.TimePageLink;
 import com.ziapple.common.data.relation.EntityRelation;
 import com.ziapple.common.data.relation.RelationTypeGroup;
-import com.ziapple.dao.JpaAbstractDaoListeningExecutorService;
-import com.ziapple.dao.entity.RelationCompositeKey;
-import com.ziapple.dao.entity.RelationEntity;
-import com.ziapple.dao.timeseries.ts.JpaAbstractSearchTimeDao;
+import com.ziapple.dao.model.entity.RelationCompositeKey;
+import com.ziapple.dao.model.entity.RelationEntity;
+import com.ziapple.dao.sql.JpaAbstractDaoListeningExecutorService;
+import com.ziapple.dao.timeseries.sql.ts.JpaAbstractSearchTimeDao;
 import com.ziapple.dao.util.DaoUtil;
+import com.ziapple.dao.util.SqlDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -46,6 +47,7 @@ import static org.springframework.data.jpa.domain.Specifications.where;
  */
 @Slf4j
 @Component
+@SqlDao
 public class JpaRelationDao extends JpaAbstractDaoListeningExecutorService implements RelationDao {
 
     @Autowired

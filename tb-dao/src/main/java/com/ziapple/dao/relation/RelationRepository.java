@@ -15,16 +15,15 @@
  */
 package com.ziapple.dao.relation;
 
-import com.ziapple.dao.entity.RelationCompositeKey;
-import com.ziapple.dao.entity.RelationEntity;
+import com.ziapple.dao.model.entity.RelationCompositeKey;
+import com.ziapple.dao.model.entity.RelationEntity;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface RelationRepository
-        extends CrudRepository<RelationEntity, RelationCompositeKey>, JpaSpecificationExecutor<RelationEntity> {
+public interface RelationRepository extends CrudRepository<RelationEntity, RelationCompositeKey>, JpaSpecificationExecutor<RelationEntity> {
 
     List<RelationEntity> findAllByFromIdAndFromTypeAndRelationTypeGroup(String fromId,
                                                                         String fromType,
