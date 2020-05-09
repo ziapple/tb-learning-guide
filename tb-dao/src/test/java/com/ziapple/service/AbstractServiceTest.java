@@ -27,6 +27,7 @@ import com.ziapple.service.tenant.TenantService;
 import com.ziapple.service.timeseries.TimeseriesService;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -39,6 +40,8 @@ import java.util.Comparator;
 
 
 @RunWith(SpringRunner.class)
+@EnableConfigurationProperties
+// 引用Configuration
 @ContextConfiguration(classes = AbstractServiceTest.class, loader = AnnotationConfigContextLoader.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @Configuration
@@ -66,7 +69,6 @@ public abstract class AbstractServiceTest {
             return o1.getId().getId().compareTo(o2.getId().getId());
         }
     }
-
 
     public JsonNode readFromResource(String resourceName) throws IOException {
         return mapper.readTree(this.getClass().getClassLoader().getResourceAsStream(resourceName));

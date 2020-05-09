@@ -45,7 +45,6 @@ import java.util.stream.Collectors;
 @Data
 @Slf4j
 public class CaffeineCacheConfiguration {
-
     private Map<String, CacheSpecs> specs;
 
     @Bean
