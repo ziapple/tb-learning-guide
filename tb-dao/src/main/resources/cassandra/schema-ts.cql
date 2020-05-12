@@ -20,6 +20,14 @@ WITH replication = {
 	'replication_factor' : 1
 };
 
+//Partition Key(entity_type, entity_id, key, partition),Clustering Key(ts)
+/**
+Cassandra之中的存储，是2-level nested Map（2级嵌套map）
+　　Partition Key –> Custering Key –> Data
+
+　　partition key: 可以在where中使用  eq and in
+　　clustering key: 可以在where中使用 < <= = >= > in
+**/
 CREATE TABLE IF NOT EXISTS tb-learning.ts_kv_cf (
     entity_type text, // (DEVICE, CUSTOMER, TENANT)
     entity_id timeuuid,

@@ -36,6 +36,7 @@ import com.ziapple.dao.timeseries.TsPartitionDate;
 import com.ziapple.dao.timeseries.queue.SimpleListenableFuture;
 import com.ziapple.dao.timeseries.sql.ts.TimeseriesDao;
 import com.ziapple.dao.util.NoSqlTsDao;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -676,6 +677,7 @@ public class CassandraBaseTimeseriesDao extends CassandraAbstractAsyncDao implem
         return executeAsyncRead(tenantId, select);
     }
 
+    @Synchronized
     private PreparedStatement getSaveStmt(DataType dataType) {
         if (saveStmts == null) {
             saveStmts = new PreparedStatement[DataType.values().length];
