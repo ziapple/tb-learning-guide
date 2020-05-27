@@ -8,6 +8,7 @@
     </appender>
 
     <logger name="com.ziapple.dao" level="INFO"/>
+    <logger name="com.ziapple.test" level="INFO"/>
     <logger name="com.ziapple.service" level="INFO"/>
     <logger name="org.apache.cassandra" level="WARN"/>
     <logger name="org.cassandraunit" level="WARN" />

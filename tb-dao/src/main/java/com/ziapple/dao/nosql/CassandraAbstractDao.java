@@ -22,6 +22,7 @@ import com.ziapple.dao.model.type.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -42,6 +43,13 @@ public abstract class CassandraAbstractDao {
 
     private ConsistencyLevel defaultReadLevel;
     private ConsistencyLevel defaultWriteLevel;
+
+    // 批处理执行器
+    @Autowired
+    private CassandraBufferedRateBatchExecutor rateBatchLimiter;
+
+    @Value("${cassandra.ts.batch}")
+    private boolean cassandraTsBatch = false;
 
     private Session getSession() {
         if (session == null) {
@@ -92,9 +100,17 @@ public abstract class CassandraAbstractDao {
         if (log.isDebugEnabled()) {
             log.debug("Execute cassandra statement {}", statementToString(statement));
         }
+        //getUninterruptibly会阻塞，直到获取到请求结果
         return executeAsync(tenantId, statement, level).getUninterruptibly();
     }
 
+    /**
+     * 每个submit返回的ResultSetFutur必须set值，否则会一直阻塞
+     * @param tenantId
+     * @param statement
+     * @param level
+     * @return ResultSetFuture
+     */
     private ResultSetFuture executeAsync(TenantId tenantId, Statement statement, ConsistencyLevel level) {
         if (log.isDebugEnabled()) {
             log.debug("Execute cassandra async statement {}", statementToString(statement));
@@ -102,7 +118,10 @@ public abstract class CassandraAbstractDao {
         if (statement.getConsistencyLevel() == null) {
             statement.setConsistencyLevel(level);
         }
-        return rateLimiter.submit(new CassandraStatementTask(tenantId, getSession(), statement));
+        if(cassandraTsBatch)
+            return rateBatchLimiter.submit(new CassandraStatementTask(tenantId, getSession(), statement));
+        else
+            return rateLimiter.submit(new CassandraStatementTask(tenantId, getSession(), statement));
     }
 
     private static String statementToString(Statement statement) {

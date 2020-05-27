@@ -25,59 +25,101 @@ import com.ziapple.common.data.id.TenantId;
 import com.ziapple.common.util.ThingsBoardThreadFactory;
 import com.ziapple.dao.nosql.CassandraStatementTask;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 
 /**
- * Created by ashvayka on 24.10.18.
+ * 异步任务AsyncTask执行器，所有查询和写入任务添加到BlockingQueue阻塞队列
+ * 和TbSqlBlockingQueue不同
+ * - 增加了每个租户的并发请求限制perTenantLimits
+ * - 读写操作全部通过Queue来操作，TbSqlBlockingQueue只负责写入
+ * - 写操作不是批量操作，会影响性能
  */
 @Slf4j
-public abstract class AbstractBufferedRateExecutor<T extends AsyncTask, F extends ListenableFuture<V>, V> implements BufferedRateExecutor<T, F> {
-
-    private final long maxWaitTime;
-    private final long pollMs;
-    private final BlockingQueue<AsyncTaskContext<T, V>> queue;
-    private final ExecutorService dispatcherExecutor;
-    private final ExecutorService callbackExecutor;
-    private final ScheduledExecutorService timeoutExecutor;
-    private final int concurrencyLimit;
-    private final int printQueriesFreq;
-    private final boolean perTenantLimitsEnabled;
-    private final String perTenantLimitsConfiguration;
-    private final ConcurrentMap<TenantId, TbRateLimits> perTenantLimits = new ConcurrentHashMap<>();
-    protected final ConcurrentMap<TenantId, AtomicInteger> rateLimitedTenants = new ConcurrentHashMap<>();
-
-    protected final AtomicInteger concurrencyLevel = new AtomicInteger();
-    protected final AtomicInteger totalAdded = new AtomicInteger();
-    protected final AtomicInteger totalLaunched = new AtomicInteger();
-    protected final AtomicInteger totalReleased = new AtomicInteger();
-    protected final AtomicInteger totalFailed = new AtomicInteger();
-    protected final AtomicInteger totalExpired = new AtomicInteger();
-    protected final AtomicInteger totalRejected = new AtomicInteger();
-    protected final AtomicInteger totalRateLimited = new AtomicInteger();
+public abstract class AbstractBufferedRateBatchExecutor<T extends AsyncTask, F extends ListenableFuture<V>, V>  implements BufferedRateExecutor<T, F> {
+    // 任务最大等待时间，超时的任务不会执行，默认为20000ms
+    protected final long maxWaitTime;
+    // 当前并发大于最大并发数，任务处理线程会暂停pollMs时间，直到当前并发小于设置的并发数
+    protected final long pollMs;
+    protected final BlockingQueue<AsyncTaskContext<T, V>> queue;
+    protected final ExecutorService dispatcherExecutor;
+    protected final ExecutorService callbackExecutor;
+    protected final ScheduledExecutorService timeoutExecutor;
+    // 当前并发限制
+    protected final int concurrencyLimit;
+    // 打印频率
+    protected final int printQueriesFreq;
+    // 记录打印频率
     protected final AtomicInteger printQueriesIdx = new AtomicInteger();
+    // 开启租户限制
+    protected final boolean perTenantLimitsEnabled;
+    // 租户并发限制配置
+    protected final String perTenantLimitsConfiguration;
+    // 每个租户的并发限制，保护queue的写入数量最大值，超过最大值写入totalRejected
+    protected final ConcurrentMap<TenantId, TbRateLimits> perTenantLimits = new ConcurrentHashMap<>();
+    // 记录每个租户的并发数,默认为5000:1,100000:60
+    protected final ConcurrentMap<TenantId, AtomicInteger> rateLimitedTenants = new ConcurrentHashMap<>();
+    // 最大当前处理的任务并发数量，超过则让线程等待pollMs毫秒
+    protected final AtomicInteger concurrencyLevel = new AtomicInteger();
+    // 当前队列已添加数量
+    protected final AtomicInteger totalAdded = new AtomicInteger();
+    // 当前队列待处理的数量
+    protected final AtomicInteger totalLaunched = new AtomicInteger();
+    // 当前队列记录成功写入的数量，理论上totalLaunched=totalReleased
+    protected final AtomicInteger totalReleased = new AtomicInteger();
+    // 当前队列失败的数量
+    protected final AtomicInteger totalFailed = new AtomicInteger();
+    // 当前队列超时的任务数量
+    protected final AtomicInteger totalExpired = new AtomicInteger();
+    // 超过租户限制会被拒绝
+    protected final AtomicInteger totalRejected = new AtomicInteger();
+    // 记录总的任务提交数
+    protected final AtomicInteger totalRateLimited = new AtomicInteger();
 
-    public AbstractBufferedRateExecutor(int queueLimit, int concurrencyLimit, long maxWaitTime, int dispatcherThreads, int callbackThreads, long pollMs,
-                                        boolean perTenantLimitsEnabled, String perTenantLimitsConfiguration, int printQueriesFreq) {
+    // 单条任务最大处理时间
+    @Value("${cassandra.ts.max_delay}")
+    protected int maxDelay;
+
+    // 每批次处理最大记录数
+    @Value("${cassandra.ts.batch_size}")
+    protected int batchSize;
+
+    public AbstractBufferedRateBatchExecutor(int queueLimit, int concurrencyLimit, long maxWaitTime, int dispatcherThreads, int callbackThreads, long pollMs,
+                                             boolean perTenantLimitsEnabled, String perTenantLimitsConfiguration, int printQueriesFreq) {
         this.maxWaitTime = maxWaitTime;
         this.pollMs = pollMs;
         this.concurrencyLimit = concurrencyLimit;
         this.printQueriesFreq = printQueriesFreq;
         this.queue = new LinkedBlockingDeque<>(queueLimit);
-        this.dispatcherExecutor = Executors.newFixedThreadPool(dispatcherThreads, ThingsBoardThreadFactory.forName("nosql-dispatcher"));
+        this.dispatcherExecutor = Executors.newFixedThreadPool(dispatcherThreads, ThingsBoardThreadFactory.forName("nosql-batch-dispatcher"));
         this.callbackExecutor = Executors.newWorkStealingPool(callbackThreads);
-        this.timeoutExecutor = Executors.newSingleThreadScheduledExecutor(ThingsBoardThreadFactory.forName("nosql-timeout"));
+        this.timeoutExecutor = Executors.newSingleThreadScheduledExecutor(ThingsBoardThreadFactory.forName("nosql-batch-timeout"));
         this.perTenantLimitsEnabled = perTenantLimitsEnabled;
         this.perTenantLimitsConfiguration = perTenantLimitsConfiguration;
+        // 任务处理线程
         for (int i = 0; i < dispatcherThreads; i++) {
             dispatcherExecutor.submit(this::dispatch);
         }
     }
 
+    protected abstract SettableFuture<V> create();
+    protected abstract F wrap(T task, SettableFuture<V> future);
+    protected abstract ResultSetFuture executeBatch(List<AsyncTaskContext<T, V>> tasks);
+
+    /**
+     * 提交任务
+     * 1. 检查是否超过租户并发限制，超过则写入totalRejected
+     * 2. 记录totalAdded，写入queue队列
+     * @param task
+     * @return
+     */
     @Override
     public F submit(T task) {
         SettableFuture<V> settableFuture = create();
@@ -88,20 +130,20 @@ public abstract class AbstractBufferedRateExecutor<T extends AsyncTask, F extend
                 log.info("Invalid task received: {}", task);
             } else if (!task.getTenantId().isNullUid()) {
                 TbRateLimits rateLimits = perTenantLimits.computeIfAbsent(task.getTenantId(), id -> new TbRateLimits(perTenantLimitsConfiguration));
-                if (!rateLimits.tryConsume()) {
+                if (!rateLimits.tryConsume()) {// 超过并发限制
                     rateLimitedTenants.computeIfAbsent(task.getTenantId(), tId -> new AtomicInteger(0)).incrementAndGet();
                     totalRateLimited.incrementAndGet();
-                    // 任务抛出异常
                     settableFuture.setException(new TenantRateLimitException());
                     perTenantLimitReached = true;
                 }
             }
         }
-        if (!perTenantLimitReached) {
+        if (!perTenantLimitReached) {// 每个租户还未达到并发限制，添加到Queue队列，每个任务配套一个SettableFuture
             try {
                 totalAdded.incrementAndGet();
                 queue.add(new AsyncTaskContext<>(UUID.randomUUID(), task, settableFuture, System.currentTimeMillis()));
             } catch (IllegalStateException e) {
+                // 记录因并发限制而拒绝的请求
                 totalRejected.incrementAndGet();
                 settableFuture.setException(e);
             }
@@ -121,62 +163,73 @@ public abstract class AbstractBufferedRateExecutor<T extends AsyncTask, F extend
         }
     }
 
-    protected abstract SettableFuture<V> create();
-
-    protected abstract F wrap(T task, SettableFuture<V> future);
-
-    protected abstract ListenableFuture<V> execute(AsyncTaskContext<T, V> taskCtx);
-
+    /**
+     * 任务执行线程，dispatcherExecutor
+     */
     private void dispatch() {
         log.info("Buffered rate executor thread started");
         while (!Thread.interrupted()) {
             int curLvl = concurrencyLevel.get();
-            AsyncTaskContext<T, V> taskCtx = null;
+            // 批量取数
+            List<AsyncTaskContext<T, V>> tasks = new ArrayList<>();
             try {
                 if (curLvl <= concurrencyLimit) {
-                    taskCtx = queue.take();
-                    final AsyncTaskContext<T, V> finalTaskCtx = taskCtx;
+                    // 获取队列第一个任务
+                    AsyncTaskContext<T, V> headBatchTaskCtx  = queue.poll(maxDelay, TimeUnit.MILLISECONDS);
+                    if(headBatchTaskCtx == null)
+                        continue;
+                    else
+                        tasks.add(headBatchTaskCtx);
+
+                    queue.drainTo(tasks, batchSize - 1);
                     if (printQueriesFreq > 0) {
-                        if (printQueriesIdx.incrementAndGet() >= printQueriesFreq) {
+                        if (printQueriesIdx.addAndGet(tasks.size()) >= printQueriesFreq) {
                             printQueriesIdx.set(0);
-                            String query = queryToString(finalTaskCtx);
-                            log.info("[{}] Cassandra query: {}", taskCtx.getId(), query);
+                            // 打印每批次第一条
+                            String query = queryToString(headBatchTaskCtx);
+                            log.info("[{}] Cassandra query: {}", headBatchTaskCtx.getId(), query);
                         }
                     }
-                    logTask("Processing", finalTaskCtx);
-                    concurrencyLevel.incrementAndGet();
-                    long timeout = finalTaskCtx.getCreateTime() + maxWaitTime - System.currentTimeMillis();
+                    logTask("Processing batch ", headBatchTaskCtx);
+                    concurrencyLevel.addAndGet(tasks.size());
+
+                    // 任务最大等待时间，超过maxWaitTime的批任务不会被执行
+                    long timeout = headBatchTaskCtx.getCreateTime() + maxWaitTime - System.currentTimeMillis();
                     if (timeout > 0) {
-                        totalLaunched.incrementAndGet();
-                        ListenableFuture<V> result = execute(finalTaskCtx);
-                        result = Futures.withTimeout(result, timeout, TimeUnit.MILLISECONDS, timeoutExecutor);
-                        Futures.addCallback(result, new FutureCallback<V>() {
+                        // 当前预处理的任务数量
+                        totalLaunched.addAndGet(tasks.size());
+                        // 批量执行任务
+                        ListenableFuture batchResult = executeBatch(tasks);
+                        Futures.withTimeout(batchResult, timeout, TimeUnit.MILLISECONDS, timeoutExecutor);
+                        Futures.addCallback(batchResult, new FutureCallback<ResultSet>() {
                             @Override
-                            public void onSuccess(@Nullable V result) {
-                                logTask("Releasing", finalTaskCtx);
-                                totalReleased.incrementAndGet();
-                                concurrencyLevel.decrementAndGet();
-                                finalTaskCtx.getFuture().set(result);
+                            public void onSuccess(@Nullable ResultSet result) {
+                                logTask("Releasing", headBatchTaskCtx);
+                                totalReleased.addAndGet(tasks.size());
+                                concurrencyLevel.addAndGet(-1 * tasks.size());
+                                // 设置返回值，表明执行成功
+                                tasks.forEach(task -> task.getFuture().set(null));
                             }
 
                             @Override
                             public void onFailure(Throwable t) {
                                 if (t instanceof TimeoutException) {
-                                    logTask("Expired During Execution", finalTaskCtx);
+                                    logTask("Expired During Execution", headBatchTaskCtx);
                                 } else {
-                                    logTask("Failed", finalTaskCtx);
+                                    logTask("Failed", headBatchTaskCtx);
                                 }
-                                totalFailed.incrementAndGet();
-                                concurrencyLevel.decrementAndGet();
-                                finalTaskCtx.getFuture().setException(t);
-                                log.debug("[{}] Failed to execute task: {}", finalTaskCtx.getId(), finalTaskCtx.getTask(), t);
+                                // 全部批处理任务失败
+                                totalFailed.addAndGet(tasks.size());
+                                concurrencyLevel.addAndGet(-1 * tasks.size());
+                                headBatchTaskCtx.getFuture().setException(t);
+                                log.debug("[{}] Failed to execute task: {}", headBatchTaskCtx.getId(), headBatchTaskCtx.getTask(), t);
                             }
                         }, callbackExecutor);
                     } else {
-                        logTask("Expired Before Execution", finalTaskCtx);
-                        totalExpired.incrementAndGet();
-                        concurrencyLevel.decrementAndGet();
-                        taskCtx.getFuture().setException(new TimeoutException());
+                        logTask("Expired Before Execution", headBatchTaskCtx);
+                        totalExpired.addAndGet(tasks.size());
+                        concurrencyLevel.addAndGet(-1 * tasks.size());
+                        tasks.forEach(task -> task.getFuture().setException(new TimeoutException()));
                     }
                 } else {
                     Thread.sleep(pollMs);
@@ -184,10 +237,10 @@ public abstract class AbstractBufferedRateExecutor<T extends AsyncTask, F extend
             } catch (InterruptedException e) {
                 break;
             } catch (Throwable e) {
-                if (taskCtx != null) {
-                    log.debug("[{}] Failed to execute task: {}", taskCtx.getId(), taskCtx, e);
-                    totalFailed.incrementAndGet();
-                    concurrencyLevel.decrementAndGet();
+                if (tasks != null) {
+                    log.debug("Failed to execute task: {}", tasks.size(), e);
+                    totalFailed.addAndGet(tasks.size());
+                    concurrencyLevel.addAndGet(-1 * tasks.size());
                 } else {
                     log.debug("Failed to queue task:", e);
                 }
@@ -209,6 +262,7 @@ public abstract class AbstractBufferedRateExecutor<T extends AsyncTask, F extend
         }
     }
 
+    // 打印任务的Sql语句
     private String queryToString(AsyncTaskContext<T, V> taskCtx) {
         CassandraStatementTask cassStmtTask = (CassandraStatementTask) taskCtx.getTask();
         if (cassStmtTask.getStatement() instanceof BoundStatement) {
@@ -225,6 +279,7 @@ public abstract class AbstractBufferedRateExecutor<T extends AsyncTask, F extend
         }
     }
 
+    // 打印Sql语句的参数
     private static String toStringWithValues(BoundStatement boundStatement, ProtocolVersion protocolVersion) {
         CodecRegistry codecRegistry = boundStatement.preparedStatement().getCodecRegistry();
         PreparedStatement preparedStatement = boundStatement.preparedStatement();
