@@ -33,7 +33,7 @@
         <mockito.version>1.9.5</mockito.version>
         <scala.version>2.11</scala.version>
         <akka.version>2.4.2</akka.version>
-        <netty.version>4.1.37.Final</netty.version>
+        <netty.version>4.1.50.Final</netty.version>
         <lombok.version>1.16.18</lombok.version>
         <bouncycastle.version>1.56</bouncycastle.version>
         <kafka.version>2.3.0</kafka.version>
