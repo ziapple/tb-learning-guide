@@ -1,0 +1,83 @@
+# Cassandra 驱动参数配置 #
+cassandra:
+  # 集群名
+  cluster_name: "${CASSANDRA_CLUSTER_NAME:Casssandra Cluster}"
+  # 空间名
+  keyspace_name: "${CASSANDRA_KEYSPACE_NAME:cas}"
+  # Url连接地址
+  url: "${CASSANDRA_URL:192.168.56.104:9042}"
+  # 是否启动SSL安全连接
+  ssl: "${CASSANDRA_USE_SSL:false}"
+  # 是否启动监控管理,详见https://www.jianshu.com/p/5bacb06e334b
+  jmx: "${CASSANDRA_USE_JMX:true}"
+  # 启动统计监控
+  metrics: "${CASSANDRA_DISABLE_METRICS:true}"
+  # 是否压缩
+  compression: "${CASSANDRA_COMPRESSION:none}"
+  # 集群启动超时时间
+  init_timeout_ms: "${CASSANDRA_CLUSTER_INIT_TIMEOUT_MS:300000}"
+  # 集群启动重试时间
+  init_retry_interval_ms: "${CASSANDRA_CLUSTER_INIT_RETRY_INTERVAL_MS:3000}"
+  # 本地最大请求数
+  max_requests_per_connection_local: "${CASSANDRA_MAX_REQUESTS_PER_CONNECTION_LOCAL:32768}"
+  # 远程最大请求数
+  max_requests_per_connection_remote: "${CASSANDRA_MAX_REQUESTS_PER_CONNECTION_REMOTE:32768}"
+  # 身份认证
+  credentials: "${CASSANDRA_USE_CREDENTIALS:false}"
+  # 用户名
+  username: "${CASSANDRA_USERNAME:cassandra}"
+  # 密码
+  password: "${CASSANDRA_PASSWORD:cassandra}"
+
+  # Cassandra 集群网络连接参数 #
+  socket:
+    # 连接超时时间
+    connect_timeout: "${CASSANDRA_SOCKET_TIMEOUT:5000}"
+    # 读取超时时间
+    read_timeout: "${CASSANDRA_SOCKET_READ_TIMEOUT:20000}"
+    # 是否心跳检测
+    keep_alive: "${CASSANDRA_SOCKET_KEEP_ALIVE:true}"
+    # 重用socket地址
+    reuse_address: "${CASSANDRA_SOCKET_REUSE_ADDRESS:true}"
+    # 延时关闭策略:优雅关闭
+    so_linger: "${CASSANDRA_SOCKET_SO_LINGER:}"
+    # 关闭络包延迟确认，立即确认
+    tcp_no_delay: "${CASSANDRA_SOCKET_TCP_NO_DELAY:false}"
+    # 接收缓存
+    receive_buffer_size: "${CASSANDRA_SOCKET_RECEIVE_BUFFER_SIZE:}"
+    # 发送缓存
+    send_buffer_size: "${CASSANDRA_SOCKET_SEND_BUFFER_SIZE:}"
+
+  # Cassandra 集群读写参数配置 #
+  query:
+    # 读一致性, 从最近的复制节点返回结果 ONE|QUORUM|ALL
+    read_consistency_level: "${CASSANDRA_READ_CONSISTENCY_LEVEL:ONE}"
+    # 写一致性,至少成功写入一个复制节点 ONE|QUORUM|ALL
+    write_consistency_level: "${CASSANDRA_WRITE_CONSISTENCY_LEVEL:ONE}"
+    # 读取缓存大小
+    default_fetch_size: "${CASSANDRA_DEFAULT_FETCH_SIZE:2000}"
+    # 分区机制，根据时间戳划分分区 MINUTES|HOURS|DAYS|MONTHS|INDEFINITE
+    ts_key_value_partitioning: "${TS_KV_PARTITIONING:MONTHS}"
+    # 数据保存时间，0无限制
+    ts_key_value_ttl: "${TS_KV_TTL:0}"
+    # event保存时间，0无限制
+    events_ttl: "${TS_EVENTS_TTL:0}"
+    # Specify TTL of debug log in seconds. The current value corresponds to one week
+    debug_events_ttl: "${DEBUG_EVENTS_TTL:604800}"
+    buffer_size: "${CASSANDRA_QUERY_BUFFER_SIZE:200000}"
+    # 读写并发限制，目标：20万w/s & 1万r/s
+    concurrent_limit: "${CASSANDRA_QUERY_CONCURRENT_LIMIT:200000}"
+    # 单任务最大等待时间，超时的任务不会执行，
+    permit_max_wait_time: "${PERMIT_MAX_WAIT_TIME:120000}"
+    # 处理队列任务线程数
+    dispatcher_threads: "${CASSANDRA_QUERY_DISPATCHER_THREADS:10}"
+    # 处理任务回调的线程数
+    callback_threads: "${CASSANDRA_QUERY_CALLBACK_THREADS:10}"
+    # 削峰等待时间，当前并发大于最大并发数，系统暂停pollMs时间，直到当前并发小于设置的并发数
+    poll_ms: "${CASSANDRA_QUERY_POLL_MS:50}"
+    # 队列任务打印频率间隔时间
+    rate_limit_print_interval_ms: "${CASSANDRA_QUERY_RATE_LIMIT_PRINT_MS:10000}"
+    # kv中除了目标值，其他类型全部赋值null
+    set_null_values_enabled: "${CASSANDRA_QUERY_SET_NULL_VALUES_ENABLED:false}"
+    # 打印CQL语句间隔频率，0-不打印
+    print_queries_freq: "${CASSANDRA_QUERY_PRINT_FREQ:0}"

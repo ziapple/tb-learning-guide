@@ -36,6 +36,7 @@ import java.util.concurrent.Executors;
 
 /**
  * Created by ashvayka on 05.10.18.
+ * 将Mqtt消息发送给Kafka，再有Kafka的消费者发给Akka集群
  */
 @ConditionalOnExpression("'${transport.type:null}'=='null'")
 @Service

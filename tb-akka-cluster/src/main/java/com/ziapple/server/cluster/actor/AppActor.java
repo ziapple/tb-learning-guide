@@ -26,6 +26,9 @@ import com.ziapple.server.cluster.msg.TransportToDeviceActorMsg;
 /**
  * thingsboard主Actor，接收设备端发来的消息
  * 1. 从{@code LocalTranportService}接收到的Mqtt消息全部交给AppActor处理
+ * AppActor->DeviceActor.pushToRuleEngine->AppActor.getOrCreateTenantActor->TenantActor
+ * ->RuleChainManagerActor->RootChainActor.MessageProcess.DeviceActorToRuleEngineMsg
+ * ->pushMsgToNode(RuleChainToRuleNodeMsg)->RuleNodeActor->RuleNodeActorMessageProcessor
  */
 public class AppActor extends ContextAwareActor {
     private final BiMap<DeviceId, ActorRef> deviceActors;

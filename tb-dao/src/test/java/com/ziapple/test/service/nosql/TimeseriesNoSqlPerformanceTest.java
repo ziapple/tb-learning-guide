@@ -56,6 +56,7 @@ public class TimeseriesNoSqlPerformanceTest extends AbstractServiceTest {
     private AtomicInteger nTps = new AtomicInteger(0);
     private CountDownLatch countDownLatch = new CountDownLatch(threads);
 
+
     @Before
     public void before() {
         Tenant tenant = new Tenant();

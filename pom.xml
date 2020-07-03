@@ -17,6 +17,7 @@
         <module>tb-common</module>
         <module>tb-application</module>
         <module>tb-demo</module>
+        <module>tb-ruleengine</module>
     </modules>
     <packaging>pom</packaging>
 

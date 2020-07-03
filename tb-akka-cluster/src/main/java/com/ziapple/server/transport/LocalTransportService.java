@@ -15,7 +15,8 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 /**
- * 模拟处理Mqtt消息的后端服务
+ * 处理Mqtt消息的后端服务
+ * 将Mqtt消息直接传送给Akka集群
  */
 @Slf4j
 @Service
@@ -30,7 +31,7 @@ public class LocalTransportService {
     private DataDecodingEncodingService encodingService;
 
     /**
-     * 处理Mqtt消息
+     * 处理Mqtt消息,发送给AppActor
      * @param deviceId
      * @param msg
      */

@@ -1,6 +1,5 @@
 package com.ziapple.test.cluster;
 
-import com.ziapple.rpc.server.*;
 import com.ziapple.server.cluster.DummyDiscoveryService;
 import com.ziapple.server.cluster.GRpcService;
 import com.ziapple.server.cluster.RpcService;
