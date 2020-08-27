@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <name>Thingsboard Akka Cluster</name>
-    <artifactId>tb-akka-cluster</artifactId>
+    <artifactId>tb-akka</artifactId>
 
     <dependencies>
         <dependency>

@@ -11,7 +11,7 @@
     <!-- 指定一级子模块,二级不用 -->
     <modules>
         <module>tb-transport</module>
-        <module>tb-akka-cluster</module>
+        <module>tb-akka</module>
         <module>tb-kafka</module>
         <module>tb-dao</module>
         <module>tb-common</module>
