@@ -13,24 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.rule.engine.api;
+package com.ziapple.rule.engine.action;
 
-import com.ziapple.rule.engine.action.TbNodeException;
-import com.ziapple.rule.engine.msg.TbMsg;
+import com.ziapple.rule.engine.api.NodeConfiguration;
+import lombok.Data;
 
-import java.util.concurrent.ExecutionException;
+@Data
+public class TbLogNodeConfiguration implements NodeConfiguration {
 
+    private String jsScript;
 
-/**
- * 规则引擎节点
- * 规定了节点初始化、节点消息、销毁、集群消息四个动作
- */
-public interface TbNode {
-
-    void init(TbContext ctx, TbNodeConfiguration configuration) throws TbNodeException;
-
-    void onMsg(TbContext ctx, TbMsg msg) throws ExecutionException, InterruptedException, TbNodeException;
-
-    void destroy();
-
+    @Override
+    public TbLogNodeConfiguration defaultConfiguration() {
+        TbLogNodeConfiguration configuration = new TbLogNodeConfiguration();
+        configuration.setJsScript("return 'Incoming message:\\n' + JSON.stringify(msg) + '\\nIncoming metadata:\\n' + JSON.stringify(metadata);");
+        return configuration;
+    }
 }

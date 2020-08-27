@@ -15,22 +15,15 @@
  */
 package com.ziapple.rule.engine.api;
 
-import com.ziapple.rule.engine.action.TbNodeException;
-import com.ziapple.rule.engine.msg.TbMsg;
-
-import java.util.concurrent.ExecutionException;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import lombok.Data;
 
 /**
- * 规则引擎节点
- * 规定了节点初始化、节点消息、销毁、集群消息四个动作
+ * Created by ashvayka on 19.01.18.
  */
-public interface TbNode {
+@Data
+public final class TbNodeConfiguration {
 
-    void init(TbContext ctx, TbNodeConfiguration configuration) throws TbNodeException;
-
-    void onMsg(TbContext ctx, TbMsg msg) throws ExecutionException, InterruptedException, TbNodeException;
-
-    void destroy();
+    private final JsonNode data;
 
 }

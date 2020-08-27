@@ -15,22 +15,8 @@
  */
 package com.ziapple.rule.engine.api;
 
-import com.ziapple.rule.engine.action.TbNodeException;
-import com.ziapple.rule.engine.msg.TbMsg;
+public interface NodeConfiguration<T extends NodeConfiguration> {
 
-import java.util.concurrent.ExecutionException;
-
-
-/**
- * 规则引擎节点
- * 规定了节点初始化、节点消息、销毁、集群消息四个动作
- */
-public interface TbNode {
-
-    void init(TbContext ctx, TbNodeConfiguration configuration) throws TbNodeException;
-
-    void onMsg(TbContext ctx, TbMsg msg) throws ExecutionException, InterruptedException, TbNodeException;
-
-    void destroy();
+    T defaultConfiguration();
 
 }

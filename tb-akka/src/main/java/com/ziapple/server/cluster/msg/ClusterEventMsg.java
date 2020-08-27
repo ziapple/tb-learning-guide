@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ziapple.rule.engine.api;
+package com.ziapple.server.cluster.msg;
 
-import com.ziapple.rule.engine.action.TbNodeException;
-import com.ziapple.rule.engine.msg.TbMsg;
-
-import java.util.concurrent.ExecutionException;
-
+import com.ziapple.server.cluster.ServerAddress;
+import lombok.Data;
 
 /**
- * 规则引擎节点
- * 规定了节点初始化、节点消息、销毁、集群消息四个动作
+ * @author Andrew Shvayka
  */
-public interface TbNode {
+@Data
+public final class ClusterEventMsg implements TbActorMsg {
 
-    void init(TbContext ctx, TbNodeConfiguration configuration) throws TbNodeException;
+    private final ServerAddress serverAddress;
+    private final boolean added;
 
-    void onMsg(TbContext ctx, TbMsg msg) throws ExecutionException, InterruptedException, TbNodeException;
-
-    void destroy();
-
+    @Override
+    public MsgType getMsgType() {
+        return MsgType.CLUSTER_EVENT_MSG;
+    }
 }
