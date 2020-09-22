@@ -16,6 +16,8 @@
 package com.ziapple.rule.engine.msg;
 
 import com.ziapple.common.data.id.EntityId;
+import com.ziapple.common.data.id.RuleChainId;
+import com.ziapple.common.data.id.RuleNodeId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -62,7 +64,7 @@ public final class TbMsg implements Serializable {
         this(id, type, originator, metaData, dataType, data, new TbMsgTransactionData(id, originator), ruleChainId, ruleNodeId, clusterPartition);
     }
 
-    public static byte[] toByteArray(org.thingsboard.server.common.msg.TbMsg msg) {
+    public static byte[] toByteArray(TbMsg msg) {
         MsgProtos.TbMsgProto.Builder builder = MsgProtos.TbMsgProto.newBuilder();
         builder.setId(msg.getId().toString());
         builder.setType(msg.getType());
@@ -100,15 +102,15 @@ public final class TbMsg implements Serializable {
 
     }
 
-    public static ByteBuffer toBytes(org.thingsboard.server.common.msg.TbMsg msg) {
+    public static ByteBuffer toBytes(TbMsg msg) {
         return ByteBuffer.wrap(toByteArray(msg));
     }
 
-    public static org.thingsboard.server.common.msg.TbMsg fromBytes(byte[] data) {
+    public static TbMsg fromBytes(byte[] data) {
         return fromBytes(ByteBuffer.wrap(data));
     }
 
-    public static org.thingsboard.server.common.msg.TbMsg fromBytes(ByteBuffer buffer) {
+    public static TbMsg fromBytes(ByteBuffer buffer) {
         try {
             MsgProtos.TbMsgProto proto = MsgProtos.TbMsgProto.parseFrom(buffer.array());
             TbMsgMetaData metaData = new TbMsgMetaData(proto.getMetaData().getDataMap());
@@ -128,8 +130,8 @@ public final class TbMsg implements Serializable {
         }
     }
 
-    public org.thingsboard.server.common.msg.TbMsg copy(UUID newId, RuleChainId ruleChainId, RuleNodeId ruleNodeId, long clusterPartition) {
-        return new org.thingsboard.server.common.msg.TbMsg(newId, type, originator, metaData.copy(), dataType, data, transactionData, ruleChainId, ruleNodeId, clusterPartition);
+    public TbMsg copy(UUID newId, RuleChainId ruleChainId, RuleNodeId ruleNodeId, long clusterPartition) {
+        return new TbMsg(newId, type, originator, metaData.copy(), dataType, data, transactionData, ruleChainId, ruleNodeId, clusterPartition);
     }
 
 }
