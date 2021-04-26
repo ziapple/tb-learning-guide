@@ -43,7 +43,7 @@
         <jackson-core.version>2.9.9</jackson-core.version>
         <commons-lang3.version>3.4</commons-lang3.version>
         <commons-validator.version>1.6</commons-validator.version>
-        <commons-io.version>2.5</commons-io.version>
+        <commons-io.version>2.7</commons-io.version>
         <commons-csv.version>1.4</commons-csv.version>
         <guava.version>21.0</guava.version>
         <protobuf.version>3.6.1</protobuf.version>
