@@ -36,7 +36,7 @@
         <akka.version>2.4.2</akka.version>
         <netty.version>4.1.37.Final</netty.version>
         <lombok.version>1.16.18</lombok.version>
-        <bouncycastle.version>1.56</bouncycastle.version>
+        <bouncycastle.version>1.67</bouncycastle.version>
         <kafka.version>2.3.0</kafka.version>
         <jackson.version>2.9.9.3</jackson.version>
         <jackson-annotations.version>2.9.9</jackson-annotations.version>
