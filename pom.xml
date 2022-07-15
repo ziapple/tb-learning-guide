@@ -38,7 +38,7 @@
         <lombok.version>1.16.18</lombok.version>
         <bouncycastle.version>1.56</bouncycastle.version>
         <kafka.version>2.3.0</kafka.version>
-        <jackson.version>2.9.9.3</jackson.version>
+        <jackson.version>2.12.6.1</jackson.version>
         <jackson-annotations.version>2.9.9</jackson-annotations.version>
         <jackson-core.version>2.9.9</jackson-core.version>
         <commons-lang3.version>3.4</commons-lang3.version>
